@@ -8,10 +8,21 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-08-19-gis-and-remote-sensing-based-assessment-and-mapping-of.md"
+    },
+    {
+      "date": "2026-08-19",
+      "topic": "remote-sensing",
+      "title": "Quantum-inspired unitary pooling for multispectral satellite image classification",
+      "doi": "https://doi.org/10.1007/s42484-026-00429-x",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-19-quantum-inspired-unitary-pooling-for-multispectral.md"
     }
   ],
   "keys": [
+    "doi:10.1007/s42484-026-00429-x",
     "doi:10.38027/smart.v3n1-10",
+    "title:053b0d1120027c9f",
     "title:65d9a303c6573c79"
   ]
 }
