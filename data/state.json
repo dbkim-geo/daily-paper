@@ -1,4 +1,17 @@
 {
-  "posted": [],
-  "keys": []
+  "posted": [
+    {
+      "date": "2026-08-19",
+      "topic": "remote-sensing",
+      "title": "GIS and Remote Sensing-Based Assessment and Mapping of Industrial Pollution Impacts: A Case Study of the Kafue River, Zambia",
+      "doi": "https://doi.org/10.38027/smart.v3n1-10",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-19-gis-and-remote-sensing-based-assessment-and-mapping-of.md"
+    }
+  ],
+  "keys": [
+    "doi:10.38027/smart.v3n1-10",
+    "title:65d9a303c6573c79"
+  ]
 }
