@@ -194,6 +194,7 @@ class Paper:
     topic_key: str = ""
     score: float = 0.0
     alt_pdf_urls: list[str] = field(default_factory=list)   # 대체 전문 경로
+    paper_keywords: list[str] = field(default_factory=list) # 원문에 적힌 저자 키워드
     publisher: str = ""             # 출판사명 + 상위 계열사명 (megajournal 판정용)
     journal_id: str = ""            # OpenAlex source id (저널 등급 조회용)
     venue_type: str = ""            # journal | repository | conference ...
@@ -322,8 +323,11 @@ def _openalex_abstract(inverted: dict | None) -> str:
 def fetch_openalex(topic: Topic, since: date, limit: int = 200) -> list[Paper]:
     params = urllib.parse.urlencode({
         "search": topic.scholarly,
+        # is_oa:true — 전문 확인이 목적이므로 open access 논문만 받는다.
+        # 다만 OA라고 전문이 받아지는 것은 아니다(상용 출판사의 봇 차단).
+        # 실제 확보 여부는 select 단계에서 다시 확인한다.
         "filter": f"from_publication_date:{since.isoformat()},"
-                  f"type:article,has_abstract:true,language:en",
+                  f"type:article,has_abstract:true,language:en,is_oa:true",
         "sort": "publication_date:desc",
         "per-page": limit,
         "mailto": "dongbum80@gmail.com",

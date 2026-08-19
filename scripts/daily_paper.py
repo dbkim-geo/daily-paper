@@ -44,19 +44,15 @@ def today_kst() -> date:
 # 공통: 논문 선정
 # --------------------------------------------------------------------------
 
-# 1위의 전문을 못 구했을 때 차순위로 넘어갈 수 있는 점수 차 상한.
-# 전문 기반 요약이 초록 기반보다 확실히 낫지만, 그렇다고 점수가 크게 낮은
-# 논문까지 끌어올리지는 않는다.
-FULLTEXT_FALLBACK_MARGIN = 4.0
+# 한 주제에서 전문 확보를 시도할 최대 후보 수.
+# 상용 출판사의 차단률이 높아(실측 상위 15건 중 3~4건만 성공) 넉넉히 둔다.
+# 차단 응답은 즉시 오므로 시간 비용은 크지 않다.
+MAX_FULLTEXT_ATTEMPTS = 15
 
 
-def pick_paper(day: date, state: dict, topic_key: str | None,
-               window_days: int) -> tuple[Paper, list[Paper]] | None:
-    """당일 주제부터 순회하며 아직 게시하지 않은 최고 점수 논문을 고른다.
-
-    (최고점 논문, 같은 주제의 미게시 후보 전체)를 돌려준다. 후보 목록은
-    1위의 전문 확보가 실패했을 때 차순위를 시도하는 데 쓴다.
-    """
+def iter_topic_candidates(day: date, state: dict, topic_key: str | None,
+                          window_days: int):
+    """주제를 순회하며 (주제, 미게시 후보 목록)을 차례로 내놓는다."""
     if topic_key:
         topic = TOPICS_BY_KEY.get(topic_key)
         if topic is None:
@@ -75,15 +71,9 @@ def pick_paper(day: date, state: dict, topic_key: str | None,
         print(f"    후보 {len(candidates)}건 / 미게시 {len(fresh)}건")
 
         if fresh:
-            best = fresh[0]
-            print(f"\n선정: {best.title}")
-            print(f"  주제={topic.label}  소스={best.source}  "
-                  f"발행={best.published}  점수={best.score:.1f}")
-            return best, fresh
-
-        print("    게시 가능한 신규 논문 없음 — 다음 주제로 넘어간다")
-
-    return None
+            yield topic, fresh
+        else:
+            print("    게시 가능한 신규 논문 없음 — 다음 주제로 넘어간다")
 
 
 # --------------------------------------------------------------------------
@@ -102,32 +92,27 @@ def cmd_select(args: argparse.Namespace) -> int:
     state = load_state()
     print(f"기존 게시글 {len(state.get('posted', []))}건\n")
 
-    picked = pick_paper(day, state, args.topic, args.window_days)
-    if picked is None:
-        print("\n모든 주제에서 신규 논문을 찾지 못했다. 오늘은 게시를 건너뛴다.")
-        return 0
+    # pypdf만 사용, anthropic 불필요
+    from fulltext import extract_author_keywords, extract_pdf_text
 
-    paper, fresh = picked
-
+    paper: Paper | None = None
     full_text = ""
-    if not args.no_fulltext:
-        from fulltext import extract_pdf_text  # pypdf만 사용, anthropic 불필요
 
-        # 상용 출판사가 PDF를 막는 경우가 잦다. 같은 논문의 대체 경로를 먼저
-        # 훑고, 그래도 안 되면 점수가 비슷한 차순위 논문으로 넘어간다.
-        # 상위 출판사의 차단률이 높아(실측 상위 15건 중 성공 3~4건) 시도 횟수를
-        # 넉넉히 둔다. 차단 응답은 대부분 즉시 오므로 시간 비용은 크지 않다.
-        cutoff = paper.score - FULLTEXT_FALLBACK_MARGIN
-        attempts = [p for p in fresh if p.score >= cutoff][:10]
+    for topic, fresh in iter_topic_candidates(day, state, args.topic, args.window_days):
+        if args.no_fulltext:
+            paper = fresh[0]
+            break
 
-        for idx, cand in enumerate(attempts):
-            if idx:
-                print(f"\n차순위 시도({cand.score:.1f}점): {cand.title[:70]}")
+        # 전문을 실제로 확보한 논문만 게시한다. OA 논문이라도 상용 출판사가
+        # PDF를 막는 일이 잦으므로, 링크 유무가 아니라 실제 확보로 판정한다.
+        for idx, cand in enumerate(fresh[:MAX_FULLTEXT_ATTEMPTS]):
+            print(f"\n[{idx + 1}] 전문 확보 시도({cand.score:.1f}점, {cand.venue[:30]}): "
+                  f"{cand.title[:60]}")
             urls = [cand.pdf_url, *cand.alt_pdf_urls]
             for url in urls:
                 if not url:
                     continue
-                print(f"전문 확보 시도: {url}")
+                print(f"    {url}")
                 full_text = extract_pdf_text(url)
                 if full_text:
                     break
@@ -137,19 +122,33 @@ def cmd_select(args: argparse.Namespace) -> int:
             if not full_text and cand.source != "arxiv":
                 arxiv_pdf = find_arxiv_pdf(cand.title)
                 if arxiv_pdf and arxiv_pdf not in urls:
-                    print(f"arXiv 사본 발견: {arxiv_pdf}")
+                    print(f"    arXiv 사본: {arxiv_pdf}")
                     full_text = extract_pdf_text(arxiv_pdf)
+
             if full_text:
                 paper = cand
-                print(f"전문 {len(full_text):,}자 확보")
                 break
 
-        if not full_text:
-            print("전문 없음 — 초록 기반 요약으로 진행")
+        if paper:
+            break
+        print(f"\n'{topic.label}'에서 전문을 확보한 논문이 없다 — 다음 주제로 넘어간다")
 
-    if paper is not fresh[0]:
-        print(f"\n최종 선정(전문 확보 가능): {paper.title}")
-        print(f"  소스={paper.source}  발행={paper.published}  점수={paper.score:.1f}")
+    if paper is None:
+        print("\n전문을 확보한 논문을 찾지 못했다. 오늘은 게시를 건너뛴다.")
+        return 0
+
+    topic = TOPICS_BY_KEY[paper.topic_key]
+    print(f"\n선정: {paper.title}")
+    print(f"  주제={topic.label}  저널={paper.venue}  소스={paper.source}  "
+          f"발행={paper.published}  점수={paper.score:.1f}")
+    print(f"  전문 {len(full_text):,}자" if full_text else "  전문 없음(--no-fulltext)")
+
+    if full_text:
+        # 저자가 원문에 적은 키워드. 없으면 OpenAlex의 자동 생성 키워드로
+        # 채우지 않는다. 오류가 섞여 있어 "원문 키워드"라고 할 수 없다.
+        paper.paper_keywords = extract_author_keywords(full_text)
+        if paper.paper_keywords:
+            print(f"  원문 키워드: {', '.join(paper.paper_keywords)}")
 
     if args.dry_run:
         print("\n[dry-run] candidate.json을 쓰지 않는다.")
@@ -233,12 +232,11 @@ def cmd_run(args: argparse.Namespace) -> int:
     print(f"=== run {day.isoformat()} ===\n")
 
     state = load_state()
-    picked = pick_paper(day, state, args.topic, args.window_days)
-    if picked is None:
+    paper = next((fresh[0] for _, fresh
+                  in iter_topic_candidates(day, state, args.topic, args.window_days)), None)
+    if paper is None:
         print("\n모든 주제에서 신규 논문을 찾지 못했다. 오늘은 게시를 건너뛴다.")
         return 0
-
-    paper, _ = picked
 
     from summarize import summarize
 

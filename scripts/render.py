@@ -98,20 +98,22 @@ def render_markdown(paper: Paper, summary: "PaperSummary", day: date) -> str:
         f"basis: {yq(summary.basis)}",
         "keywords:",
         *[f"  - {yq(k)}" for k in summary.keywords],
-        "---",
-        "",
     ]
+    if paper.paper_keywords:
+        fm.append("paper_keywords:")
+        fm.extend(f"  - {yq(k)}" for k in paper.paper_keywords)
+    fm.extend(["---", ""])
 
-    basis_note = (
-        "> 논문 **전문(full text)** 을 근거로 요약했다."
-        if summary.basis == "full_text"
-        else "> 본문 전문에 접근할 수 없어 **초록(abstract) 기준**으로 요약했다. "
-             "방법론과 결과의 세부 사항은 원문 확인이 필요하다."
-    )
+    body = [f"## 한 줄 요약\n\n**{summary.one_liner}**\n"]
 
-    body = [
-        f"## 한 줄 요약\n\n**{summary.one_liner}**\n",
-        f"{basis_note}\n",
+    # 전문 기반일 때는 굳이 밝히지 않는다. 초록 기반일 때만 경고가 의미가 있다.
+    if summary.basis != "full_text":
+        body.append(
+            "> 본문 전문에 접근할 수 없어 **초록(abstract) 기준**으로 요약했다. "
+            "방법론과 결과의 세부 사항은 원문 확인이 필요하다.\n"
+        )
+
+    body += [
         f"## 초록 요약\n\n{summary.abstract_summary}\n",
         f"## 주요 차별성\n\n{_bullets(summary.novelty)}\n",
         f"## 주요 기여점\n\n{_bullets(summary.contributions)}\n",
@@ -123,6 +125,10 @@ def render_markdown(paper: Paper, summary: "PaperSummary", day: date) -> str:
         f"## 논의\n\n{summary.discussion}\n",
         f"## 왜 읽을 만한가\n\n{summary.relevance_note}\n",
     ]
+
+    if paper.paper_keywords:
+        body.append("## 원문 키워드\n\n"
+                    + ", ".join(f"`{k}`" for k in paper.paper_keywords) + "\n")
 
     # 원문 링크
     links = []

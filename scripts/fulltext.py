@@ -23,6 +23,51 @@ EXTRACT_CHAR_LIMIT = 2 * FULLTEXT_CHAR_LIMIT
 PDF_BYTE_LIMIT = 25 * 1024 * 1024
 
 
+# 저자 키워드 블록의 시작과 끝. 끝은 다음 섹션 제목이 나오는 지점이다.
+_KEYWORD_HEAD = re.compile(
+    r"(?ims)^[ \t]*(?:key\s?words?|index\s+terms)[ \t]*[:\-—.]?[ \t]*\n?(.{0,400})"
+)
+_KEYWORD_TAIL = re.compile(
+    r"(?is)\b(abstract|introduction|1\s*\.\s*introduction|article\s+info|"
+    r"received|©|copyright|highlights)\b"
+)
+
+
+def extract_author_keywords(text: str) -> list[str]:
+    """전문에서 저자가 직접 적은 키워드를 뽑는다. 없으면 빈 리스트.
+
+    OpenAlex도 keywords를 주지만 자동 생성이라 "Vegetation (pathology)" 같은
+    오류가 섞인다. 원문에 적힌 것만 쓰고, 없으면 지어내지 않는다.
+    """
+    if not text:
+        return []
+
+    match = _KEYWORD_HEAD.search(text)
+    if not match:
+        return []
+
+    block = match.group(1)
+    tail = _KEYWORD_TAIL.search(block)
+    if tail:
+        block = block[:tail.start()]
+
+    parts = re.split(r"[,;\n·•]+", block)
+    keywords: list[str] = []
+    for part in parts:
+        word = re.sub(r"\s+", " ", part).strip(" .:-—\t")
+        # 한 낱말도 안 되거나 문장으로 흘러간 조각은 키워드가 아니다.
+        if not (2 <= len(word) <= 60) or len(word.split()) > 6:
+            continue
+        if word.lower() in {w.lower() for w in keywords}:
+            continue
+        keywords.append(word)
+        if len(keywords) >= 12:
+            break
+
+    # 한두 개만 잡혔다면 오탐일 가능성이 높다.
+    return keywords if len(keywords) >= 3 else []
+
+
 def extract_pdf_text(pdf_url: str) -> str:
     """PDF 본문 텍스트. 실패하면 빈 문자열을 돌려준다."""
     try:
