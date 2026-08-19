@@ -195,6 +195,8 @@ class Paper:
     score: float = 0.0
     alt_pdf_urls: list[str] = field(default_factory=list)   # 대체 전문 경로
     paper_keywords: list[str] = field(default_factory=list) # 원문에 적힌 저자 키워드
+    license: str = ""               # OA 라이선스 (그림 재사용 판정용)
+    figure_file: str = ""           # assets/figures 아래 대표 그림 파일명
     publisher: str = ""             # 출판사명 + 상위 계열사명 (megajournal 판정용)
     journal_id: str = ""            # OpenAlex source id (저널 등급 조회용)
     venue_type: str = ""            # journal | repository | conference ...
@@ -376,6 +378,7 @@ def fetch_openalex(topic: Topic, since: date, limit: int = 200) -> list[Paper]:
             venue=clean_text(venue),
             published=(work.get("publication_date") or "")[:10],
             url=work.get("doi") or (primary.get("landing_page_url") or ""),
+            license=best_oa.get("license") or "",
             pdf_url=primary_pdf,
             alt_pdf_urls=list(dict.fromkeys(alt_pdfs))[:4],
             doi=work.get("doi") or "",

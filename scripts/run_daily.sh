@@ -4,7 +4,7 @@
 #
 # 클라우드 루틴은 샌드박스 egress 정책이 논문 API를 막아 쓸 수 없었다.
 # 이 머신은 네트워크가 열려 있고 Claude Code도 구독으로 동작하므로
-# 여기서 도는 것이 추가 비용 없이 가장 확실하다. (자세한 경위는 HANDOFF.md)
+# 여기서 도는 것이 추가 비용 없이 가장 확실하다. (자세한 경위는 OPERATIONS.md)
 #
 # cron 등록:  30 8 * * *  /home/kei/geo-workspace/daily-paper/scripts/run_daily.sh
 #
@@ -119,7 +119,9 @@ fi
 git config user.name  "daily-paper-bot"
 git config user.email "dongbum80@gmail.com"
 
-git add _posts data/state.json                  || die "git add 실패"
+git add _posts data/state.json                   || die "git add 실패"
+# 대표 그림은 라이선스가 맞을 때만 생기므로 없을 수 있다.
+[ -d assets/figures ] && { git add assets/figures || die "그림 git add 실패"; }
 git commit --quiet -m "post: $slug"             || die "git commit 실패"
 git push --quiet                                || die "git push 실패"
 

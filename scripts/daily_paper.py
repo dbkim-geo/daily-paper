@@ -26,12 +26,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from render import (STATE_PATH, already_posted, load_state, record, save_state,
-                    write_post)
+                    slugify, write_post)
 from sources import (TOPICS, TOPICS_BY_KEY, Paper, collect_candidates,
                      find_arxiv_pdf, rotation_from)
 
 KST = timezone(timedelta(hours=9))
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+FIGURES_DIR = Path(__file__).resolve().parent.parent / "assets" / "figures"
 CANDIDATE_PATH = DATA_DIR / "candidate.json"
 SUMMARY_PATH = DATA_DIR / "summary.json"
 
@@ -93,7 +94,9 @@ def cmd_select(args: argparse.Namespace) -> int:
     print(f"기존 게시글 {len(state.get('posted', []))}건\n")
 
     # pypdf만 사용, anthropic 불필요
-    from fulltext import extract_author_keywords, extract_pdf_text
+    from fulltext import (download_pdf, extract_author_keywords,
+                          extract_pdf_text, extract_representative_figure,
+                          figure_license_ok)
 
     paper: Paper | None = None
     full_text = ""
@@ -109,11 +112,13 @@ def cmd_select(args: argparse.Namespace) -> int:
             print(f"\n[{idx + 1}] 전문 확보 시도({cand.score:.1f}점, {cand.venue[:30]}): "
                   f"{cand.title[:60]}")
             urls = [cand.pdf_url, *cand.alt_pdf_urls]
+            pdf_bytes = b""
             for url in urls:
                 if not url:
                     continue
                 print(f"    {url}")
-                full_text = extract_pdf_text(url)
+                pdf_bytes = download_pdf(url)
+                full_text = extract_pdf_text(url, pdf_bytes) if pdf_bytes else ""
                 if full_text:
                     break
 
@@ -123,7 +128,8 @@ def cmd_select(args: argparse.Namespace) -> int:
                 arxiv_pdf = find_arxiv_pdf(cand.title)
                 if arxiv_pdf and arxiv_pdf not in urls:
                     print(f"    arXiv 사본: {arxiv_pdf}")
-                    full_text = extract_pdf_text(arxiv_pdf)
+                    pdf_bytes = download_pdf(arxiv_pdf)
+                    full_text = extract_pdf_text(arxiv_pdf, pdf_bytes) if pdf_bytes else ""
 
             if full_text:
                 paper = cand
@@ -149,6 +155,20 @@ def cmd_select(args: argparse.Namespace) -> int:
         paper.paper_keywords = extract_author_keywords(full_text)
         if paper.paper_keywords:
             print(f"  원문 키워드: {', '.join(paper.paper_keywords)}")
+
+        # 대표 그림. 재배포가 허용되는 라이선스일 때만 싣는다.
+        if not figure_license_ok(paper.license):
+            print(f"  그림 생략 — 재사용 가능한 라이선스가 아니다 "
+                  f"(license={paper.license or '미상'})")
+        elif not args.dry_run:
+            figure = extract_representative_figure(pdf_bytes)
+            if figure:
+                image, ext = figure
+                FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+                name = f"{day.isoformat()}-{slugify(paper.title)}.{ext}"
+                (FIGURES_DIR / name).write_bytes(image)
+                paper.figure_file = name
+                print(f"  대표 그림 저장: assets/figures/{name}")
 
     if args.dry_run:
         print("\n[dry-run] candidate.json을 쓰지 않는다.")

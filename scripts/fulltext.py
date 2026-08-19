@@ -68,14 +68,8 @@ def extract_author_keywords(text: str) -> list[str]:
     return keywords if len(keywords) >= 3 else []
 
 
-def extract_pdf_text(pdf_url: str) -> str:
-    """PDF 본문 텍스트. 실패하면 빈 문자열을 돌려준다."""
-    try:
-        from pypdf import PdfReader
-    except ImportError:
-        print("    pypdf 미설치 — 전문 추출을 건너뛴다")
-        return ""
-
+def download_pdf(pdf_url: str) -> bytes:
+    """PDF 바이트를 받아온다. PDF가 아니면 빈 바이트를 돌려준다."""
     try:
         req = urllib.request.Request(
             pdf_url,
@@ -85,13 +79,32 @@ def extract_pdf_text(pdf_url: str) -> str:
             data = resp.read(PDF_BYTE_LIMIT)
     except Exception as exc:
         print(f"    전문 다운로드 실패: {exc}")
-        return ""
+        return b""
 
     # Content-Type이나 URL 확장자는 믿을 수 없다. Springer Nature 등은 .pdf
     # 주소에 HTTP 200과 text/html 안내 페이지를 돌려준다. 실제 바이트로 판정한다.
     if not data.startswith(b"%PDF"):
         head = data[:200].decode("utf-8", "replace").strip().replace("\n", " ")
         print(f"    PDF가 아닌 응답({len(data):,}바이트): {head[:60]}")
+        return b""
+
+    return data
+
+
+def extract_pdf_text(pdf_url: str, data: bytes | None = None) -> str:
+    """PDF 본문 텍스트. 실패하면 빈 문자열을 돌려준다.
+
+    이미 받아둔 바이트가 있으면 `data`로 넘겨 재다운로드를 피한다.
+    """
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        print("    pypdf 미설치 — 전문 추출을 건너뛴다")
+        return ""
+
+    if data is None:
+        data = download_pdf(pdf_url)
+    if not data:
         return ""
 
     try:
@@ -122,3 +135,91 @@ def extract_pdf_text(pdf_url: str) -> str:
         print(f"    본문이 {len(text):,}자로 한도({FULLTEXT_CHAR_LIMIT:,}자)를 넘어 뒷부분을 자른다")
 
     return text[:FULLTEXT_CHAR_LIMIT]
+
+
+# --------------------------------------------------------------------------
+# 대표 그림 추출
+# --------------------------------------------------------------------------
+
+# 재배포가 허용되는 라이선스만 허용한다. 그림을 축소해 싣는 것은 2차적 저작물
+# 작성에 해당하므로 ND(변경 금지) 계열은 제외한다. 라이선스를 모르면 넣지 않는다.
+FIGURE_OK_LICENSES = ("cc-by", "cc-by-sa", "cc-by-nc", "cc-by-nc-sa", "cc0", "public-domain")
+
+FIGURE_MIN_PIXELS = 150_000     # 로고(91x91=8천)와 진짜 그림(26만~145만)을 가른다
+FIGURE_MAX_WIDTH = 1200         # 저장 시 가로 상한
+FIGURE_SKIP_PAGES = 1           # 표지에는 학술지 로고·QR만 있다
+
+
+def figure_license_ok(license_name: str) -> bool:
+    return (license_name or "").strip().lower() in FIGURE_OK_LICENSES
+
+
+def extract_representative_figure(data: bytes) -> tuple[bytes, str] | None:
+    """PDF에서 대표 그림 하나를 골라 (이미지 바이트, 확장자)로 돌려준다.
+
+    본문에서 가장 먼저 나오는 큰 그림을 고른다. 보통 Figure 1(연구 지역도나
+    방법론 흐름도)이라 대표성이 있다. 실패하면 None.
+    """
+    try:
+        from pypdf import PdfReader
+        from PIL import Image
+    except ImportError:
+        print("    Pillow/pypdf 미설치 — 그림 추출을 건너뛴다")
+        return None
+
+    try:
+        reader = PdfReader(io.BytesIO(data))
+    except Exception as exc:
+        print(f"    그림 추출용 PDF 파싱 실패: {exc}")
+        return None
+
+    # 여러 쪽에 반복되는 이미지는 러닝 헤더/로고다. 먼저 세어 두고 제외한다.
+    pages_by_name: dict[str, int] = {}
+    for page in reader.pages[:40]:
+        try:
+            for img in page.images:
+                pages_by_name[img.name] = pages_by_name.get(img.name, 0) + 1
+        except Exception:
+            continue
+
+    for index, page in enumerate(reader.pages[:40], start=1):
+        if index <= FIGURE_SKIP_PAGES:
+            continue
+        try:
+            images = list(page.images)
+        except Exception:
+            continue
+
+        for img in images:
+            if pages_by_name.get(img.name, 0) >= 3:
+                continue
+            try:
+                pil = Image.open(io.BytesIO(img.data))
+                width, height = pil.size
+            except Exception:
+                continue
+
+            if width * height < FIGURE_MIN_PIXELS:
+                continue
+            ratio = width / height if height else 0
+            if not (0.3 <= ratio <= 5.0):     # 얇은 띠(장식선·배너)를 거른다
+                continue
+
+            try:
+                if width > FIGURE_MAX_WIDTH:
+                    scale = FIGURE_MAX_WIDTH / width
+                    pil = pil.resize((FIGURE_MAX_WIDTH, max(1, round(height * scale))),
+                                     Image.LANCZOS)
+                if pil.mode not in ("RGB", "RGBA", "L"):
+                    pil = pil.convert("RGB")
+                buffer = io.BytesIO()
+                pil.save(buffer, format="PNG", optimize=True)
+            except Exception as exc:
+                print(f"    그림 변환 실패: {exc}")
+                continue
+
+            print(f"    대표 그림: p{index} {width}x{height} "
+                  f"-> {len(buffer.getvalue()) / 1024:,.0f}KB")
+            return buffer.getvalue(), "png"
+
+    return None

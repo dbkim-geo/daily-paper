@@ -102,9 +102,24 @@ def render_markdown(paper: Paper, summary: "PaperSummary", day: date) -> str:
     if paper.paper_keywords:
         fm.append("paper_keywords:")
         fm.extend(f"  - {yq(k)}" for k in paper.paper_keywords)
+    if paper.figure_file:
+        fm.append(f"figure: {yq('/assets/figures/' + paper.figure_file)}")
     fm.extend(["---", ""])
 
     body = [f"## 한 줄 요약\n\n**{summary.one_liner}**\n"]
+
+    if paper.figure_file:
+        # 저작권 표시는 CC BY 계열의 조건이다. 출처·저작자·라이선스를 함께 적는다.
+        credit = ", ".join(filter(None, [
+            paper.authors[0] + " 외" if paper.authors else "",
+            paper.venue,
+            paper.published[:4] if paper.published else "",
+        ]))
+        body.append(
+            f"![원문 대표 그림]({{{{ '/assets/figures/{paper.figure_file}' | relative_url }}}})\n\n"
+            f"*원문에서 발췌 — {credit}. "
+            f"[{paper.license.upper()}](https://creativecommons.org/licenses/) 라이선스.*\n"
+        )
 
     # 전문 기반일 때는 굳이 밝히지 않는다. 초록 기반일 때만 경고가 의미가 있다.
     if summary.basis != "full_text":
