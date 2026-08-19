@@ -9,53 +9,88 @@ permalink: /about/
 
 ## 다루는 주제
 
-여덟 개 주제를 하루씩 순환합니다.
+**도시계획과 환경계획이 주제이고, Remote Sensing · GIS · GeoAI · GeoXAI는 그 문제를 푸는
+도구입니다.** 원격탐사 알고리즘이나 공간분석 기법 자체를 다룬 방법론 논문은 제외합니다.
 
 | 주제 | 범위 |
 | --- | --- |
-| GeoAI | geospatial artificial intelligence, spatial deep learning |
-| GeoXAI | explainable / interpretable AI in geospatial contexts |
-| 환경계획 | environmental planning, land use planning, ecosystem services |
-| 도시계획 | urban planning, urban form, built environment, smart city |
+| 도시계획 | urban planning, urban form, built environment, urban heat island, accessibility |
+| 환경계획 | environmental planning, land use planning, green infrastructure, ecosystem services |
 | 탄소중립 | carbon neutrality, net-zero, decarbonization pathways |
 | 탄소저감 | emission reduction, carbon sequestration, carbon sink |
-| GIS | geographic information systems, spatial analysis, spatial statistics |
-| Remote Sensing | satellite imagery, earth observation, land cover |
 
-해당 주제에 새 논문이 없으면 다음 주제로 넘어가므로, 매일 한 편이 보장됩니다.
+여섯 날을 주기로 순환하며, 계획 두 주제가 여섯 날 중 나흘을 차지합니다.
+
+```
+도시계획 → 환경계획 → 탄소중립 → 도시계획 → 환경계획 → 탄소저감
+```
+
+후보가 되려면 **주제어와 도구가 모두** 걸려야 합니다. 주제어만 있으면 설문·정책담론만
+다룬 계획 이론 논문이 들어오고, 도구만 있으면 계획과 무관한 방법론 논문이 들어옵니다.
 
 ## 논문 수집 방식
 
 세 개의 공개 학술 API에서 후보를 모읍니다.
 
-- **arXiv** — GeoAI·Remote Sensing 계열 preprint, 전문 접근이 용이합니다.
-- **OpenAlex** — 저널 게재논문 전반, open access PDF 링크를 제공합니다.
+- **OpenAlex** — 저널 게재논문 전반. 출판사·라이선스·저널 지표까지 제공하는 주 소스입니다.
+- **arXiv** — preprint, 그리고 출판사가 막은 논문의 저자 사본을 찾는 경로입니다.
 - **Crossref** — 위 두 소스를 보완합니다.
 
-주제 관련도, 발행 최신성, 초록 충실도, 전문 접근 가능 여부를 합산해 점수가 가장 높은
-미게시 논문을 선정합니다. 이미 게시한 논문은 DOI · arXiv ID · 제목 해시로 걸러냅니다.
+### 저널 기준
+
+무명 저널이 뽑히지 않도록 다음을 적용합니다.
+
+- **megajournal 제외** — MDPI, Frontiers, PLOS, Hindawi, Springer의 Discover 계열 등
+  게재량이 많고 선별도가 낮은 곳은 받지 않습니다.
+- **저널 등급 하한** — OpenAlex의 2년 평균 피인용지수(임팩트팩터 대응 지표)가 일정 수준
+  이상인 저널만 받고, 등급이 높을수록 가점을 줍니다.
+- **리뷰 논문 제외** — review, meta-analysis, bibliometric 등은 받지 않습니다.
+- 대학 리포지토리·프로시딩 같은 비저널 매체와 철회 논문도 제외합니다.
+
+### 전문 확보
+
+**전문을 실제로 확보한 논문만 게시합니다.** open access 논문만 후보로 삼되, open access라고
+해서 PDF를 받을 수 있는 것은 아닙니다. 주요 상용 출판사는 자동 접근을 차단하기 때문에,
+저장소 사본과 저자의 arXiv 사본까지 찾아본 뒤 그래도 실패하면 다음 후보로 넘어갑니다.
+
+그래서 **선정 논문이 점수 1위가 아닐 수 있습니다.** 요약의 근거를 초록이 아닌 본문에 두는
+편이 낫다고 보기 때문입니다. 그날 어느 주제에서도 전문을 구하지 못하면 게시를 건너뜁니다.
+
+주제 관련도, 발행 최신성, 저널 등급, 초록 충실도를 합산해 점수가 가장 높은 미게시 논문부터
+전문 확보를 시도합니다. 이미 게시한 논문은 DOI · arXiv ID · 제목 해시로 걸러냅니다.
 
 > **Google Scholar 추천 논문은 연동하지 않습니다.** 공개 API가 없고 추천 피드는 개인
 > 로그인 세션을 요구하므로 자동화가 불가능합니다. 대신 위 키워드 기반 수집으로 대체합니다.
 
 ## 요약 방식
 
-Anthropic의 **Claude Opus 5**가 요약을 생성합니다. Open access PDF를 확보한 경우 논문
-전문을 근거로 요약하고, 그렇지 않으면 초록만으로 요약한 뒤 각 글 상단에 근거를 명시합니다.
+Anthropic의 **Claude Opus 5**가 논문 전문을 근거로 요약을 생성합니다. 생성된 요약은
+정해진 스키마를 통과해야 게시되며, 통과하지 못하면 오류를 되돌려주고 다시 쓰게 합니다.
 
 각 글은 다음 순서로 구성됩니다.
 
 한 줄 요약 → 초록 요약 → 주요 차별성 → 주요 기여점 → 연구의 배경 → 필요성 → 목적 →
-방법론 → 결과 → 논의 → 왜 읽을 만한가
+방법론 → 결과 → 논의 → 왜 읽을 만한가 → 원문 키워드
 
 서술은 한국어로 하되, 학계에서 통용되는 전문 용어(예: Random Forest, NDVI, Sentinel-2,
 SHAP, urban heat island)는 영어 원문 그대로 표기합니다.
+
+**원문 키워드**는 저자가 논문에 직접 적은 것만 싣습니다. 자동 생성된 키워드는 오류가 섞이므로
+쓰지 않으며, 원문에 키워드가 없으면 해당 항목을 생략합니다.
+
+## 그림에 대하여
+
+글 상단의 그림은 **논문 원문에서 가져온 것**입니다. 본문에서 가장 먼저 나오는 큰 그림을
+쓰므로 대개 연구 지역도나 방법론 흐름도입니다.
+
+재배포가 허용되는 **Creative Commons 라이선스(CC BY 계열)** 인 경우에만 싣고, 저작자·저널·
+연도·라이선스를 그림 아래에 표기합니다. 변경 금지(ND) 조건이거나 라이선스를 확인할 수 없으면
+그림 없이 게시합니다.
 
 ## 주의사항
 
 요약은 자동 생성물이며 원문의 뉘앙스나 세부 조건을 놓칠 수 있습니다.
 **인용하거나 연구에 활용하기 전에는 반드시 원문을 직접 확인하세요.**
-특히 "요약 근거: 초록"으로 표시된 글은 방법론과 결과의 세부 사항이 제한적입니다.
 
 ## 문의
 

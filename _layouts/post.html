@@ -32,9 +32,9 @@ layout: default
       <div><dt>발행</dt><dd>{{ page.published }}</dd></div>
       {%- endif %}
       <div><dt>수집</dt><dd>{{ page.source }}</dd></div>
-      <div><dt>요약 근거</dt><dd>
-        {%- if page.basis == 'full_text' %}논문 전문{% else %}초록{% endif -%}
-      </dd></div>
+      {%- if page.basis != 'full_text' %}
+      <div><dt>요약 근거</dt><dd>초록</dd></div>
+      {%- endif %}
     </dl>
 
     <div class="post-actions">
