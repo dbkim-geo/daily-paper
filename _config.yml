@@ -39,7 +39,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
-  - HANDOFF.md
+  - OPERATIONS.md
   - vendor/
   - .venv/
 
