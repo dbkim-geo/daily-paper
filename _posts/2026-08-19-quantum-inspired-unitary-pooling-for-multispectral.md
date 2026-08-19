@@ -20,13 +20,16 @@ keywords:
   - "EuroSAT"
   - "Sentinel-2 multispectral"
   - "land use and land cover classification"
+figure: "/assets/figures/2026-08-19-quantum-inspired-unitary-pooling-for-multispectral.png"
 ---
 
 ## 한 줄 요약
 
 **quantum-inspired unitary pooling으로 multispectral 분류의 수렴을 두 배 앞당긴다**
 
-> 논문 **전문(full text)** 을 근거로 요약했다.
+![원문 대표 그림]({{ '/assets/figures/2026-08-19-quantum-inspired-unitary-pooling-for-multispectral.png' | relative_url }})
+
+*원문에서 발췌 — Georgios Maragkopoulos 외, Quantum Machine Intelligence, 2026. [CC-BY](https://creativecommons.org/licenses/) 라이선스.*
 
 ## 초록 요약
 

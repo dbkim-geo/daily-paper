@@ -20,13 +20,25 @@ keywords:
   - "Sentinel-2"
   - "Landsat 8/9"
   - "water quality monitoring"
+paper_keywords:
+  - "GIS"
+  - "Remote Sensing"
+  - "Water Pollution"
+  - "Kafue River"
+  - "NDVI"
+  - "NDTI"
+  - "Smart Environmental Monitoring"
+  - "Zambia"
+figure: "/assets/figures/2026-08-19-gis-and-remote-sensing-based-assessment-and-mapping-of.png"
 ---
 
 ## 한 줄 요약
 
 **위성 NDTI·NDVI로 광미댐 붕괴의 환경 영향을 추적하고 조기경보 설계를 제안했다**
 
-> 논문 **전문(full text)** 을 근거로 요약했다.
+![원문 대표 그림]({{ '/assets/figures/2026-08-19-gis-and-remote-sensing-based-assessment-and-mapping-of.png' | relative_url }})
+
+*원문에서 발췌 — Stanley Kapota 외, Smart Design Policies, 2026. [CC-BY](https://creativecommons.org/licenses/) 라이선스.*
 
 ## 초록 요약
 
@@ -72,6 +84,10 @@ NDTI는 빠르게 되돌아오는 급성 수질 신호를, NDVI는 느리게 움
 ## 왜 읽을 만한가
 
 무료 위성 자료만으로 오염 사건의 급성 영향과 잔류 영향을 나누어 보는 방법, 그리고 그것을 실제 규제 절차로 옮기는 설계가 함께 담겨 있다. 환경 모니터링 체계나 이상 탐지 파이프라인을 설계할 때, 지수 선택과 임계값 설정의 근거뿐 아니라 위성 지수로는 말할 수 없는 것의 경계까지 참고할 만하다.
+
+## 원문 키워드
+
+`GIS`, `Remote Sensing`, `Water Pollution`, `Kafue River`, `NDVI`, `NDTI`, `Smart Environmental Monitoring`, `Zambia`
 
 ## 원문 링크
 
