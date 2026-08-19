@@ -9,6 +9,7 @@
 # cron 등록:  30 8 * * *  /home/kei/geo-workspace/daily-paper/scripts/run_daily.sh
 #
 # DRY_RUN=1 을 주면 선정·요약·렌더링까지만 하고 커밋과 푸시는 건너뛴다.
+# TOPIC=urban-planning 처럼 주면 순환 대신 그 주제로 고정한다.
 
 set -uo pipefail
 
@@ -44,7 +45,10 @@ git pull --ff-only --quiet || die "git pull 실패 (로컬과 원격이 갈라�
 # 1. 논문 선정 -------------------------------------------------------------
 rm -f data/candidate.json data/summary.json
 
-if ! "$PY" scripts/daily_paper.py select >>"$LOG" 2>&1; then
+SELECT_ARGS=()
+[ -n "${TOPIC:-}" ] && { SELECT_ARGS+=(--topic "$TOPIC"); log "주제 고정: $TOPIC"; }
+
+if ! "$PY" scripts/daily_paper.py select "${SELECT_ARGS[@]}" >>"$LOG" 2>&1; then
     die "select 단계 오류"
 fi
 

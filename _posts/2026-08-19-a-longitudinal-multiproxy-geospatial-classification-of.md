@@ -27,12 +27,10 @@ paper_keywords:
   - "nighttime lights"
   - "Sentinel-2"
   - "WorldPop"
-  - "Degree of"
+  - "Degree of Urbanization"
   - "Community Health Units"
-  - "Kiliﬁ"
+  - "Kilifi"
   - "Kenya"
-  - "Posted Date: April 1st"
-  - "2026"
 figure: "/assets/figures/2026-08-19-a-longitudinal-multiproxy-geospatial-classification-of.png"
 ---
 
@@ -92,7 +90,7 @@ raw 값의 높은 상관은 다섯 proxy가 공통의 정착지 강도 gradient�
 
 ## 원문 키워드
 
-`urbanization`, `peri-urban`, `geospatial analysis`, `nighttime lights`, `Sentinel-2`, `WorldPop`, `Degree of`, `Community Health Units`, `Kiliﬁ`, `Kenya`, `Posted Date: April 1st`, `2026`
+`urbanization`, `peri-urban`, `geospatial analysis`, `nighttime lights`, `Sentinel-2`, `WorldPop`, `Degree of Urbanization`, `Community Health Units`, `Kilifi`, `Kenya`
 
 ## 원문 링크
 

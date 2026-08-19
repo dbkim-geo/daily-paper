@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import io
 import re
+import unicodedata
 import urllib.request
 
 from sources import USER_AGENT
@@ -27,9 +28,12 @@ PDF_BYTE_LIMIT = 25 * 1024 * 1024
 _KEYWORD_HEAD = re.compile(
     r"(?ims)^[ \t]*(?:key\s?words?|index\s+terms)[ \t]*[:\-—.]?[ \t]*\n?(.{0,400})"
 )
+# 앞에 붙은 절 번호("1 Introduction", "1. Abstract")까지 함께 잘라낸다.
+# 번호를 남기면 직전 키워드에 "vegetation stress 1"처럼 달라붙는다.
 _KEYWORD_TAIL = re.compile(
-    r"(?is)\b(abstract|introduction|1\s*\.\s*introduction|article\s+info|"
-    r"received|©|copyright|highlights)\b"
+    r"(?is)(\d+\s*\.?\s*)?(\babstract\b|\bintroduction\b|\barticle\s+info\b|"
+    r"\breceived\b|©|\bcopyright\b|\bhighlights\b|\bposted\s+date\b|\bdoi\b|"
+    r"https?://|\blicense\b|\bpreprint\b|\bcorrespond|\bfunding\b|\bcitation\b)"
 )
 
 
@@ -51,7 +55,15 @@ def extract_author_keywords(text: str) -> list[str]:
     if tail:
         block = block[:tail.start()]
 
-    parts = re.split(r"[,;\n·•]+", block)
+    # PDF의 합자(ﬁ, ﬂ)를 낱글자로 되돌린다. "Kiliﬁ" 같은 표기가 그대로 남는다.
+    block = unicodedata.normalize("NFKD", block)
+    block = "".join(c for c in block if not unicodedata.combining(c))
+
+    # 줄바꿈은 구분자가 아니라 단순 줄바꿈이다. 먼저 공백으로 합쳐야
+    # "Degree of\nUrbanization"이 "Degree of"로 잘리지 않는다.
+    block = re.sub(r"\s+", " ", block)
+
+    parts = re.split(r"[,;·•]+", block)
     keywords: list[str] = []
     for part in parts:
         word = re.sub(r"\s+", " ", part).strip(" .:-—\t")
