@@ -1,0 +1,66 @@
+---
+layout: default
+---
+{%- if paginator.page == 1 %}
+<section class="hero">
+  <h1>{{ site.tagline }}</h1>
+  <p>{{ site.description }}</p>
+  <ul class="topic-legend">
+    <li>GeoAI</li><li>GeoXAI</li><li>환경계획</li><li>도시계획</li>
+    <li>탄소중립</li><li>탄소저감</li><li>GIS</li><li>Remote Sensing</li>
+  </ul>
+</section>
+{%- endif %}
+
+{%- if paginator.posts.size == 0 %}
+<section class="empty">
+  <h2>아직 게시된 논문이 없습니다</h2>
+  <p>매일 아침 8시 30분(KST)에 첫 요약이 올라옵니다.</p>
+</section>
+{%- else %}
+
+{%- if paginator.page == 1 %}
+{%- assign latest = paginator.posts | first %}
+{%- assign chars = latest.content | strip_html | size %}
+{%- assign minutes = chars | divided_by: 500 | plus: 1 %}
+<section class="featured">
+  <p class="section-label">오늘의 논문</p>
+  <article>
+    <div class="card-meta">
+      <span class="chip" data-topic="{{ latest.topic_key }}">{{ latest.topic }}</span>
+      <time datetime="{{ latest.date | date_to_xmlschema }}">{{ latest.date | date: '%Y년 %-m월 %-d일' }}</time>
+      <span class="dot" aria-hidden="true">·</span><span>{{ minutes }}분</span>
+    </div>
+    <h2><a href="{{ latest.url | relative_url }}">{{ latest.title }}</a></h2>
+    {%- if latest.one_liner %}<p class="featured-lead">{{ latest.one_liner }}</p>{% endif %}
+    <p class="card-source">
+      {%- if latest.venue %}{{ latest.venue }}{% endif -%}
+      {%- if latest.published %} · {{ latest.published }}{% endif -%}
+    </p>
+    <a class="btn btn-primary" href="{{ latest.url | relative_url }}">요약 읽기</a>
+  </article>
+</section>
+{%- endif %}
+
+{%- if paginator.page > 1 or paginator.posts.size > 1 %}
+<section class="post-list">
+  {%- if paginator.page == 1 %}<p class="section-label">이전 논문</p>{% endif %}
+  {%- for post in paginator.posts %}
+  {%- if paginator.page == 1 and forloop.first %}{% continue %}{% endif %}
+  {% include post-card.html post=post %}
+  {%- endfor %}
+</section>
+{%- endif %}
+
+{%- if paginator.total_pages > 1 %}
+<nav class="pagination" aria-label="페이지">
+  {%- if paginator.previous_page %}
+  <a href="{{ paginator.previous_page_path | relative_url }}">← 최신</a>
+  {%- else %}<span></span>{% endif %}
+  <span class="pagination-status">{{ paginator.page }} / {{ paginator.total_pages }}</span>
+  {%- if paginator.next_page %}
+  <a href="{{ paginator.next_page_path | relative_url }}">이전 →</a>
+  {%- else %}<span></span>{% endif %}
+</nav>
+{%- endif %}
+{%- endif %}

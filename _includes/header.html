@@ -1,0 +1,16 @@
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="{{ '/' | relative_url }}">
+      <span class="brand-mark">DP</span>
+      <span class="brand-text">
+        <strong>{{ site.title }}</strong>
+        <small>{{ site.tagline }}</small>
+      </span>
+    </a>
+    <nav class="site-nav">
+      <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>오늘</a>
+      <a href="{{ '/archive/' | relative_url }}"{% if page.url contains '/archive' %} aria-current="page"{% endif %}>아카이브</a>
+      <a href="{{ '/about/' | relative_url }}"{% if page.url contains '/about' %} aria-current="page"{% endif %}>소개</a>
+    </nav>
+  </div>
+</header>

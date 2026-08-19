@@ -1,0 +1,46 @@
+title: "Daily Paper"
+tagline: "매일 아침 8시 30분, 논문 한 편"
+description: >-
+  GeoAI · GeoXAI · 환경계획 · 도시계획 · 탄소중립 · 탄소저감 · GIS · Remote Sensing
+  분야의 최신 논문을 매일 한 편씩 한국어로 요약합니다.
+author: "Dongbeom Kim"
+email: "dongbum80@gmail.com"
+
+url: "https://dbkim-geo.github.io"
+baseurl: "/daily-paper"
+repository: "dbkim-geo/daily-paper"
+
+lang: "ko-KR"
+timezone: "Asia/Seoul"
+
+permalink: /:year/:month/:day/:title/
+paginate: 10
+paginate_path: "/page:num/"
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-paginate
+
+feed:
+  path: /feed.xml
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+exclude:
+  - scripts/
+  - data/
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor/
+  - .venv/
+
+sass:
+  style: compressed

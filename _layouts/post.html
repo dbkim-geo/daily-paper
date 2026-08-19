@@ -1,0 +1,80 @@
+---
+layout: default
+---
+{%- assign chars = content | strip_html | size -%}
+{%- assign minutes = chars | divided_by: 500 | plus: 1 -%}
+<article class="post">
+
+  <div class="post-head">
+    <div class="card-meta">
+      <span class="chip" data-topic="{{ page.topic_key }}">{{ page.topic }}</span>
+      <time datetime="{{ page.date | date_to_xmlschema }}">
+        {{ page.date | date: '%Y년 %-m월 %-d일' }}
+      </time>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>읽는 데 약 {{ minutes }}분</span>
+    </div>
+
+    <h1 class="post-title">{{ page.title }}</h1>
+
+    {%- if page.one_liner %}
+    <p class="post-lead">{{ page.one_liner }}</p>
+    {%- endif %}
+
+    <dl class="post-meta">
+      {%- if page.authors and page.authors != "" %}
+      <div><dt>저자</dt><dd>{{ page.authors }}</dd></div>
+      {%- endif %}
+      {%- if page.venue and page.venue != "" %}
+      <div><dt>출처</dt><dd>{{ page.venue }}</dd></div>
+      {%- endif %}
+      {%- if page.published and page.published != "" %}
+      <div><dt>발행</dt><dd>{{ page.published }}</dd></div>
+      {%- endif %}
+      <div><dt>수집</dt><dd>{{ page.source }}</dd></div>
+      <div><dt>요약 근거</dt><dd>
+        {%- if page.basis == 'full_text' %}논문 전문{% else %}초록{% endif -%}
+      </dd></div>
+    </dl>
+
+    <div class="post-actions">
+      {%- if page.paper_url and page.paper_url != "" %}
+      <a class="btn btn-primary" href="{{ page.paper_url }}" rel="noopener">원문 보기</a>
+      {%- endif %}
+      {%- if page.pdf_url and page.pdf_url != "" %}
+      <a class="btn" href="{{ page.pdf_url }}" rel="noopener">PDF</a>
+      {%- endif %}
+      {%- if page.doi and page.doi != "" %}
+      <a class="btn" href="{% if page.doi contains 'http' %}{{ page.doi }}{% else %}https://doi.org/{{ page.doi }}{% endif %}" rel="noopener">DOI</a>
+      {%- endif %}
+    </div>
+  </div>
+
+  <div class="prose">
+    {{ content }}
+  </div>
+
+  {%- if page.keywords and page.keywords.size > 0 %}
+  <div class="keywords">
+    <h2 class="section-label">Keywords</h2>
+    <ul>
+      {%- for kw in page.keywords %}<li>{{ kw }}</li>{% endfor %}
+    </ul>
+  </div>
+  {%- endif %}
+
+  <nav class="post-nav" aria-label="다른 글">
+    {%- if page.previous %}
+    <a class="post-nav-item prev" href="{{ page.previous.url | relative_url }}">
+      <span class="post-nav-label">이전 글</span>
+      <span class="post-nav-title">{{ page.previous.title }}</span>
+    </a>
+    {%- endif %}
+    {%- if page.next %}
+    <a class="post-nav-item next" href="{{ page.next.url | relative_url }}">
+      <span class="post-nav-label">다음 글</span>
+      <span class="post-nav-title">{{ page.next.title }}</span>
+    </a>
+    {%- endif %}
+  </nav>
+</article>

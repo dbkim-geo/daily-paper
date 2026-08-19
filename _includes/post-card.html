@@ -1,0 +1,22 @@
+{%- assign chars = include.post.content | strip_html | size -%}
+{%- assign minutes = chars | divided_by: 500 | plus: 1 -%}
+<article class="card">
+  <div class="card-meta">
+    <span class="chip" data-topic="{{ include.post.topic_key }}">{{ include.post.topic }}</span>
+    <time datetime="{{ include.post.date | date_to_xmlschema }}">
+      {{ include.post.date | date: '%Y년 %-m월 %-d일' }}
+    </time>
+    <span class="dot" aria-hidden="true">·</span>
+    <span>{{ minutes }}분</span>
+  </div>
+  <h2 class="card-title">
+    <a href="{{ include.post.url | relative_url }}">{{ include.post.title }}</a>
+  </h2>
+  {%- if include.post.one_liner %}
+  <p class="card-lead">{{ include.post.one_liner }}</p>
+  {%- endif %}
+  <p class="card-source">
+    {%- if include.post.venue %}{{ include.post.venue }}{% else %}{{ include.post.source }}{% endif -%}
+    {%- if include.post.published %} · {{ include.post.published }}{% endif -%}
+  </p>
+</article>
