@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 from sources import Paper, TOPICS_BY_KEY
 
 if TYPE_CHECKING:  # anthropic 의존성을 dry-run 경로에서 끌어오지 않기 위함
-    from summarize import PaperSummary
+    from schema import PaperSummary
 
 ROOT = Path(__file__).resolve().parent.parent
 POSTS_DIR = ROOT / "_posts"

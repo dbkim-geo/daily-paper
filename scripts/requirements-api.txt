@@ -1,0 +1,4 @@
+# Anthropic API 경로(daily_paper.py run) 전용 추가 의존성.
+-r requirements.txt
+anthropic>=0.72.0
+pydantic>=2.7

@@ -8,3 +8,7 @@ vendor/
 __pycache__/
 *.pyc
 .env
+
+# 파이프라인 임시 산출물 (커밋하지 않는다)
+data/candidate.json
+data/summary.json
