@@ -32,14 +32,21 @@ def extract_pdf_text(pdf_url: str) -> str:
         return ""
 
     try:
-        req = urllib.request.Request(pdf_url, headers={"User-Agent": USER_AGENT})
+        req = urllib.request.Request(
+            pdf_url,
+            headers={"User-Agent": USER_AGENT, "Accept": "application/pdf,*/*"},
+        )
         with urllib.request.urlopen(req, timeout=60) as resp:
-            ctype = (resp.headers.get("Content-Type") or "").lower()
-            if "pdf" not in ctype and not pdf_url.lower().endswith(".pdf"):
-                return ""
             data = resp.read(PDF_BYTE_LIMIT)
     except Exception as exc:
         print(f"    전문 다운로드 실패: {exc}")
+        return ""
+
+    # Content-Type이나 URL 확장자는 믿을 수 없다. Springer Nature 등은 .pdf
+    # 주소에 HTTP 200과 text/html 안내 페이지를 돌려준다. 실제 바이트로 판정한다.
+    if not data.startswith(b"%PDF"):
+        head = data[:200].decode("utf-8", "replace").strip().replace("\n", " ")
+        print(f"    PDF가 아닌 응답({len(data):,}바이트): {head[:60]}")
         return ""
 
     try:

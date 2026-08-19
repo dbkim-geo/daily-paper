@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+import math
 import re
 import time
 import urllib.parse
@@ -23,6 +24,48 @@ from datetime import date, datetime, timedelta, timezone
 
 USER_AGENT = "daily-paper-bot/1.0 (+https://github.com/dbkim-geo/daily-paper; mailto:dongbum80@gmail.com)"
 TIMEOUT = 30
+
+
+# --------------------------------------------------------------------------
+# 저널 품질 기준
+# --------------------------------------------------------------------------
+# 게재량이 많고 선별도가 낮은 megajournal은 제외한다. OpenAlex의 출판사명과
+# 그 상위 계열사명(host_organization_lineage_names)을 모두 훑어 판정하므로,
+# 자회사 브랜드로 실려도 걸린다.
+EXCLUDED_PUBLISHERS = (
+    "multidisciplinary digital publishing institute",   # MDPI
+    "frontiers media",                                  # Frontiers
+    "public library of science",                        # PLOS
+    "hindawi",                                          # Hindawi
+)
+
+# 출판사가 아니라 저널 이름으로 걸러야 하는 megajournal.
+# Springer Nature의 Discover 시리즈가 대표적인데, 출판사명은 평범한
+# "Springer Nature"라서 EXCLUDED_PUBLISHERS로는 잡히지 않는다.
+# 여기 있는 저널을 다시 받고 싶으면 해당 항목만 지우면 된다.
+EXCLUDED_JOURNAL_RE = re.compile(
+    r"^(discover\s|heliyon$|scientific reports$|sage open$|cureus$)",
+    re.IGNORECASE,
+)
+
+# 리뷰 논문 제외. OpenAlex의 type:article 필터가 review 타입을 이미 거르지만,
+# 리뷰인데 article로 분류되는 경우가 있어 제목으로 한 번 더 막는다.
+REVIEW_TITLE_RE = re.compile(
+    r"\b(a review|the review|review of|reviews of|systematic review|literature review"
+    r"|scoping review|narrative review|meta-analysis|meta analysis|bibliometric"
+    r"|a survey of|survey of the|state of the art|state-of-the-art review)\b",
+    re.IGNORECASE,
+)
+
+# 저널 등급 하한 (OpenAlex 2yr_mean_citedness, 임팩트팩터 대응 지표).
+# 실측상 이 선을 넘겨도 전문(OA PDF) 확보율은 떨어지지 않는다.
+# 등급을 조회하지 못한 저널은 배제하지 않고 가점만 0으로 둔다.
+MIN_JOURNAL_IMPACT = 1.0
+
+# 등급 가점 상한. relevance(최대 18)를 넘지 않으면서 recency(최대 12)와
+# 견줄 만한 크기로 둔다. log를 쓰는 이유는 IF 0.6과 5의 차이는 크게,
+# 15와 30의 차이는 작게 보기 위해서다.
+PRESTIGE_MAX = 10.0
 
 
 # --------------------------------------------------------------------------
@@ -150,6 +193,10 @@ class Paper:
     arxiv_id: str = ""
     topic_key: str = ""
     score: float = 0.0
+    alt_pdf_urls: list[str] = field(default_factory=list)   # 대체 전문 경로
+    publisher: str = ""             # 출판사명 + 상위 계열사명 (megajournal 판정용)
+    journal_id: str = ""            # OpenAlex source id (저널 등급 조회용)
+    venue_type: str = ""            # journal | repository | conference ...
 
     def identity_keys(self) -> list[str]:
         """중복 게시 방지를 위한 식별자 집합."""
@@ -272,7 +319,7 @@ def _openalex_abstract(inverted: dict | None) -> str:
     return clean_text(" ".join(word for _, word in positions))
 
 
-def fetch_openalex(topic: Topic, since: date, limit: int = 50) -> list[Paper]:
+def fetch_openalex(topic: Topic, since: date, limit: int = 200) -> list[Paper]:
     params = urllib.parse.urlencode({
         "search": topic.scholarly,
         "filter": f"from_publication_date:{since.isoformat()},"
@@ -289,10 +336,32 @@ def fetch_openalex(topic: Topic, since: date, limit: int = 50) -> list[Paper]:
         if not abstract:
             continue
 
+        if work.get("is_retracted"):
+            continue
+
         best_oa = work.get("best_oa_location") or {}
         primary = work.get("primary_location") or {}
-        venue = ((primary.get("source") or {}).get("display_name")
-                 or (best_oa.get("source") or {}).get("display_name") or "")
+        src = (primary.get("source") or best_oa.get("source") or {})
+        venue = src.get("display_name") or ""
+
+        # 출판사 판정은 상위 계열사까지 본다. 예를 들어 Frontiers 계열 저널이
+        # 다른 브랜드명으로 실려도 lineage에 "Frontiers Media"가 남는다.
+        publisher = " / ".join(dict.fromkeys(
+            [src.get("host_organization_name") or ""]
+            + list(src.get("host_organization_lineage_names") or [])
+        )).strip(" /")
+
+        # 상용 출판사 사이트는 봇을 403으로 막는 경우가 많다(ScienceDirect 등).
+        # 같은 논문의 리포지토리 사본(green OA)을 대체 경로로 함께 챙겨 둔다.
+        primary_pdf = best_oa.get("pdf_url") or ""
+        alt_pdfs = []
+        for loc in work.get("locations") or []:
+            url = loc.get("pdf_url") or ""
+            if not url or url == primary_pdf:
+                continue
+            is_repo = ((loc.get("source") or {}).get("type") or "") == "repository"
+            alt_pdfs.append((0 if is_repo else 1, url))
+        alt_pdfs = [u for _, u in sorted(alt_pdfs, key=lambda x: x[0])]
 
         papers.append(Paper(
             source="openalex",
@@ -303,11 +372,80 @@ def fetch_openalex(topic: Topic, since: date, limit: int = 50) -> list[Paper]:
             venue=clean_text(venue),
             published=(work.get("publication_date") or "")[:10],
             url=work.get("doi") or (primary.get("landing_page_url") or ""),
-            pdf_url=best_oa.get("pdf_url") or "",
+            pdf_url=primary_pdf,
+            alt_pdf_urls=list(dict.fromkeys(alt_pdfs))[:4],
             doi=work.get("doi") or "",
             topic_key=topic.key,
+            publisher=clean_text(publisher),
+            journal_id=(src.get("id") or "").rsplit("/", 1)[-1],
+            venue_type=src.get("type") or "",
         ))
     return papers
+
+
+def find_arxiv_pdf(title: str) -> str:
+    """같은 논문의 arXiv preprint PDF 주소. 못 찾으면 빈 문자열.
+
+    상위 출판사(Elsevier, Springer Nature, Taylor & Francis)는 PDF 요청을
+    403이나 HTML 안내 페이지로 막는다. 저널 등급을 낮추지 않고 전문을 얻으려면
+    저자가 올린 arXiv 사본을 찾는 것이 가장 확실하다.
+    """
+    words = re.findall(r"[A-Za-z0-9]+", title)
+    if len(words) < 4:
+        return ""
+
+    query = urllib.parse.urlencode({
+        "search_query": 'ti:"' + " ".join(words[:16]) + '"',
+        "max_results": 3,
+    })
+    try:
+        root = ET.fromstring(_fetch(f"https://export.arxiv.org/api/query?{query}", retries=2))
+    except Exception:
+        return ""
+
+    def norm(s: str) -> str:
+        return re.sub(r"[^a-z0-9]+", "", s.lower())
+
+    want = norm(title)
+    for entry in root.findall(f"{ATOM}entry"):
+        found = norm(entry.findtext(f"{ATOM}title") or "")
+        # 제목이 사실상 같을 때만 인정한다. 부제·대소문자·구두점 차이는 무시된다.
+        if not found or (found not in want and want not in found):
+            continue
+        for link in entry.findall(f"{ATOM}link"):
+            if link.get("title") == "pdf" and link.get("href"):
+                return link.get("href", "")
+    return ""
+
+
+def fetch_journal_impact(journal_ids: list[str]) -> dict[str, float]:
+    """OpenAlex source id -> 2yr_mean_citedness (임팩트팩터 대응 지표).
+
+    한 번에 50개씩 묶어 조회한다. 실패하면 빈 dict를 돌려주고, 호출부는
+    등급을 모르는 저널로 취급해 배제하지 않는다. 등급 조회가 안 된다고
+    그날 게시를 통째로 건너뛰는 것이 더 나쁘기 때문이다.
+    """
+    ids = [i for i in dict.fromkeys(journal_ids) if i]
+    impact: dict[str, float] = {}
+
+    for start in range(0, len(ids), 50):
+        chunk = ids[start:start + 50]
+        params = urllib.parse.urlencode({
+            "filter": "ids.openalex:" + "|".join(chunk),
+            "per-page": 200,
+            "mailto": "dongbum80@gmail.com",
+        })
+        try:
+            payload = json.loads(_fetch(f"https://api.openalex.org/sources?{params}"))
+        except Exception as exc:
+            print(f"    저널 등급 조회 실패 ({exc}) — 등급 가점 없이 진행한다")
+            continue
+        for src in payload.get("results", []):
+            key = (src.get("id") or "").rsplit("/", 1)[-1]
+            stats = src.get("summary_stats") or {}
+            impact[key] = float(stats.get("2yr_mean_citedness") or 0.0)
+
+    return impact
 
 
 # --------------------------------------------------------------------------
@@ -346,6 +484,8 @@ def fetch_crossref(topic: Topic, since: date, limit: int = 40) -> list[Paper]:
             url=item.get("URL", ""),
             doi=item.get("DOI", ""),
             topic_key=topic.key,
+            publisher=clean_text(item.get("publisher") or ""),
+            venue_type="journal",
         ))
     return papers
 
@@ -363,13 +503,45 @@ def keyword_hits(paper: Paper, topic: Topic) -> tuple[int, int]:
     return title_hits, abstract_hits
 
 
+def rejection_reason(paper: Paper, impact: dict[str, float]) -> str:
+    """저널 품질 기준에 걸리면 그 이유를, 통과하면 빈 문자열을 돌려준다.
+
+    arXiv preprint는 저널 게재논문이 아니므로 이 기준을 적용하지 않는다.
+    대신 등급 가점을 받지 못해 자연히 뒤로 밀린다.
+    """
+    if paper.source == "arxiv":
+        return ""
+
+    haystack = paper.publisher.lower()
+    for name in EXCLUDED_PUBLISHERS:
+        if name in haystack:
+            return f"제외 출판사({paper.publisher})"
+
+    if paper.venue and EXCLUDED_JOURNAL_RE.search(paper.venue.strip()):
+        return f"제외 저널({paper.venue})"
+
+    # 대학 리포지토리·프로시딩이 저널 논문 자리에 섞여 들어오는 것을 막는다.
+    if paper.venue_type and paper.venue_type != "journal":
+        return f"비저널 매체({paper.venue_type})"
+
+    if REVIEW_TITLE_RE.search(paper.title):
+        return "리뷰 논문"
+
+    if paper.journal_id and paper.journal_id in impact:
+        if impact[paper.journal_id] < MIN_JOURNAL_IMPACT:
+            return f"저널 등급 미달(2yrIF {impact[paper.journal_id]:.2f})"
+
+    return ""
+
+
 def is_on_topic(paper: Paper, topic: Topic) -> bool:
     """주제 관련도 최소 기준. 다른 가점만으로 무관한 논문이 뽑히는 것을 막는다."""
     title_hits, abstract_hits = keyword_hits(paper, topic)
     return title_hits >= 1 or abstract_hits >= 2
 
 
-def score_paper(paper: Paper, topic: Topic, today: date) -> float:
+def score_paper(paper: Paper, topic: Topic, today: date,
+                impact: dict[str, float] | None = None) -> float:
     """주제 관련도 + 최신성 + 요약 가능성을 합산한 점수."""
     title_hits, abstract_hits = keyword_hits(paper, topic)
     relevance = min(3.0 * title_hits + 1.0 * abstract_hits, 18.0)
@@ -405,7 +577,14 @@ def score_paper(paper: Paper, topic: Topic, today: date) -> float:
     # 소스 신뢰도: 정식 게재논문(OpenAlex) > preprint(arXiv) > 메타데이터만(Crossref)
     source_bonus = {"openalex": 2.0, "arxiv": 1.0, "crossref": 0.0}.get(paper.source, 0.0)
 
-    return relevance + recency + depth + source_bonus
+    # 저널 등급. 등급을 모르는 저널과 preprint는 0점이라 자연히 뒤로 밀린다.
+    prestige = 0.0
+    if impact and paper.journal_id:
+        value = impact.get(paper.journal_id, 0.0)
+        if value > 0:
+            prestige = min(3.0 * math.log1p(value), PRESTIGE_MAX)
+
+    return relevance + recency + depth + source_bonus + prestige
 
 
 def collect_candidates(topic: Topic, today: date, window_days: int = 240) -> list[Paper]:
@@ -425,20 +604,35 @@ def collect_candidates(topic: Topic, today: date, window_days: int = 240) -> lis
         except Exception as exc:
             print(f"    [{topic.key}] {name}: 실패 ({exc})")
 
+    # 저널 등급을 한 번에 조회한다. 주제당 요청 1~2회면 충분하다.
+    impact = fetch_journal_impact([p.journal_id for p in papers if p.journal_id])
+
     # 소스 간 중복 제거 (같은 논문이 arXiv/OpenAlex 양쪽에 있을 수 있다)
     seen: set[str] = set()
     unique: list[Paper] = []
+    rejected: dict[str, int] = {}
     for paper in papers:
         if not paper.title or not paper.abstract:
             continue
         if not is_on_topic(paper, topic):
             continue
+
+        reason = rejection_reason(paper, impact)
+        if reason:
+            key = reason.split("(")[0]
+            rejected[key] = rejected.get(key, 0) + 1
+            continue
+
         keys = set(paper.identity_keys())
         if keys & seen:
             continue
         seen |= keys
-        paper.score = score_paper(paper, topic, today)
+        paper.score = score_paper(paper, topic, today, impact)
         unique.append(paper)
+
+    if rejected:
+        detail = ", ".join(f"{k} {v}건" for k, v in sorted(rejected.items()))
+        print(f"    [{topic.key}] 품질 기준 제외: {detail}")
 
     unique.sort(key=lambda p: p.score, reverse=True)
     return unique

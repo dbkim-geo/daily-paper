@@ -36,6 +36,62 @@ CONNECT를 403으로 거부했다. 조직 egress 정책이라 코드로 우회�
 `ANTHROPIC_API_KEY` Secret을 등록하면 `workflow_dispatch`로 수동 실행할 수 있다
 (전문 요약 1회 약 $0.15~0.30).
 
+## 저널 품질 기준
+
+무명 저널이 뽑히던 문제를 막기 위해 `scripts/sources.py` 상단에 기준을 모아 뒀다.
+바꾸고 싶으면 그 상수만 고치면 된다.
+
+| 상수 | 하는 일 |
+| --- | --- |
+| `EXCLUDED_PUBLISHERS` | MDPI · Frontiers · PLOS · Hindawi 배제. 상위 계열사명까지 훑으므로 자회사 브랜드로 실려도 걸린다 |
+| `EXCLUDED_JOURNAL_RE` | 출판사명으로는 안 잡히는 megajournal을 저널 이름으로 배제. Springer의 `Discover *` 시리즈, Heliyon, Scientific Reports 등 |
+| `MIN_JOURNAL_IMPACT` | 저널 등급 하한. OpenAlex `2yr_mean_citedness`(임팩트팩터 대응 지표) 기준 1.0 |
+| `PRESTIGE_MAX` | 등급 가점 상한 10점. `3.0 * log1p(IF)`로 계산해 IF 0.6↔5의 차이는 크게, 15↔30의 차이는 작게 본다 |
+| `REVIEW_TITLE_RE` | 리뷰 논문 제목 배제. OpenAlex `type:article` 필터의 백스톱이다 |
+
+이와 별개로 `source.type != "journal"`인 매체(대학 리포지토리, 프로시딩)와
+철회 논문(`is_retracted`)도 뺀다.
+
+몇 가지 알아둘 점:
+
+- **arXiv preprint에는 이 기준을 적용하지 않는다.** 저널 게재논문이 아니라
+  판정 대상이 아니고, 등급 가점을 못 받아 자연히 뒤로 밀린다.
+- **저널 등급 조회에 실패하면 배제하지 않고 가점만 0으로 둔다.** 조회 실패로
+  그날 게시를 통째로 건너뛰는 것이 더 나쁘기 때문이다.
+- 등급 조회는 주제당 요청 1~2회다(`fetch_journal_impact`가 50개씩 묶어 조회).
+- 로그에 `품질 기준 제외: ...`로 무엇이 몇 건 걸렸는지 남는다.
+
+## 전문 확보가 어려운 이유와 대응
+
+저널 등급을 올리면 **출판사가 봇을 막아** 전문을 못 받는 일이 급격히 늘어난다.
+유료화가 아니라 접근 차단이 원인이다. 실측(상위 15건 기준)으로 실제 다운로드
+성공률은 Remote Sensing 3/15, GeoAI 4/15였다.
+
+| 호스트 | 응답 |
+| --- | --- |
+| `sciencedirect.com` (Elsevier) | HTTP 403 |
+| `link.springer.com`, `nature.com` | HTTP 200 + HTML 안내 페이지 (3KB) |
+| `tandfonline.com` (T&F) | 대체로 403 |
+| `arxiv.org`, `copernicus.org` | 정상 |
+
+**OpenAlex에 PDF 링크가 있다는 것과 실제로 받아진다는 것은 다르다.**
+링크 존재율은 94%지만 실제 확보율은 20~27%다. 이 둘을 혼동하면 안 된다.
+
+대응은 세 단계다.
+
+1. `best_oa_location` 외에 `locations`의 리포지토리 사본을 대체 경로로 함께 시도한다
+   (`Paper.alt_pdf_urls`). 다만 갓 나온 논문은 아직 사본이 없는 경우가 많다.
+2. 그래도 실패하면 **같은 논문의 arXiv preprint를 제목으로 찾는다**
+   (`find_arxiv_pdf`). 저널 등급을 낮추지 않고 전문을 얻는 유일한 경로다.
+   GeoAI·RS 계열은 잘 걸리고, 환경·계획 계열은 arXiv에 잘 안 올라와 잘 안 걸린다.
+3. 그래도 안 되면 점수가 `FULLTEXT_FALLBACK_MARGIN`(4.0점) 이내인 차순위 논문으로
+   최대 10건까지 넘어간다. 이 범위를 넘어서까지 점수를 희생하지는 않으므로,
+   전부 막히면 초록 기반 요약으로 진행한다.
+
+`extract_pdf_text`는 Content-Type이나 URL 확장자를 믿지 않고 **응답 바이트가
+`%PDF`로 시작하는지**로 판정한다. Springer Nature가 `.pdf` 주소에 HTML을
+돌려주기 때문이다. 이 검사가 없으면 HTML을 pypdf에 먹여 엉뚱한 파싱 오류가 난다.
+
 ## 손으로 돌리기
 
 ```bash
