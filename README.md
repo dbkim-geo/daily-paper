@@ -28,9 +28,13 @@ Anthropic API 과금은 발생하지 않는다.
 요약 생성만 Claude가 맡고, **선정과 렌더링은 결정론적인 Python 코드가 담당한다.**
 덕분에 출력 형식이 매일 동일하고, 스키마를 어기면 게시되지 않고 실패한다.
 
-주제 순환: `GeoAI → GeoXAI → 환경계획 → 도시계획 → 탄소중립 → 탄소저감 → GIS → Remote Sensing`
+주제 순환(6일 주기): `도시계획 → 환경계획 → 탄소중립 → 도시계획 → 환경계획 → 탄소저감`
 
-당일 주제에 신규 논문이 없으면 다음 주제로 넘어가므로 매일 한 편이 보장된다.
+**도시계획·환경계획이 메인이고 RS·GIS·GeoAI·GeoXAI는 도구다.** 도구는 그 자체로
+주제가 되지 않으며, 대신 모든 후보가 공간분석 도구를 실제로 쓸 것을 요구한다
+(`TOOL_KEYWORDS`). 계획 주제어와 도구 키워드가 둘 다 걸려야 후보가 된다.
+
+당일 주제에서 전문을 확보한 신규 논문이 없으면 다음 주제로 넘어간다.
 이미 게시한 논문은 DOI · arXiv ID · 제목 해시로 걸러낸다 (`data/state.json`).
 
 > **Google Scholar 추천 논문은 연동하지 않는다.** 공개 API가 없고 추천 피드가 개인 로그인
@@ -81,7 +85,7 @@ python3 -m venv .venv
 .venv/bin/python scripts/daily_paper.py select --dry-run
 
 # 특정 주제로 고정
-.venv/bin/python scripts/daily_paper.py select --dry-run --topic geoai
+.venv/bin/python scripts/daily_paper.py select --dry-run --topic urban-planning
 
 # candidate.json 생성 → 직접 summary.json 작성 → 렌더링
 .venv/bin/python scripts/daily_paper.py select
@@ -99,7 +103,7 @@ python3 -m venv .venv
 | 옵션 | 설명 |
 | --- | --- |
 | `--date YYYY-MM-DD` | 게시 날짜 지정 (기본: 오늘 KST) |
-| `--topic KEY` | 주제 고정. `geoai`, `geoxai`, `env-planning`, `urban-planning`, `carbon-neutral`, `carbon-reduction`, `gis`, `remote-sensing` |
+| `--topic KEY` | 주제 고정. `urban-planning`, `env-planning`, `carbon-neutral`, `carbon-reduction` |
 | `--window-days N` | 저널 논문 검색 기간(일). 기본 240 |
 | `--no-fulltext` | PDF 전문 추출을 건너뛰고 초록만 사용 |
 
@@ -157,7 +161,8 @@ bundle exec jekyll serve
 | --- | --- |
 | 요약 문체·용어 규칙 | `scripts/SUMMARY_SPEC.md` |
 | 실행 절차 (재시도 횟수, 커밋 범위 등) | `scripts/ROUTINE.md` |
-| 주제 추가·수정 | `scripts/sources.py`의 `TOPICS` |
+| 주제 추가·수정 | `scripts/sources.py`의 `TOPICS` / `ROTATION` |
+| 도구 조건 | `scripts/sources.py`의 `TOOL_KEYWORDS` |
 | 요약 항목 추가·삭제 | `scripts/schema.py` + `scripts/render.py` + `SUMMARY_SPEC.md` (셋 다) |
 | 논문 선정 기준 | `scripts/sources.py`의 `score_paper()` / `is_on_topic()` |
 | 사이트 디자인 | `assets/css/style.css` |

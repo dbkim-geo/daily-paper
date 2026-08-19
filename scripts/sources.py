@@ -52,7 +52,7 @@ EXCLUDED_JOURNAL_RE = re.compile(
 # 리뷰인데 article로 분류되는 경우가 있어 제목으로 한 번 더 막는다.
 REVIEW_TITLE_RE = re.compile(
     r"\b(a review|the review|review of|reviews of|systematic review|literature review"
-    r"|scoping review|narrative review|meta-analysis|meta analysis|bibliometric"
+    r"|scoping review|narrative review|meta-analysis|meta analysis|bibliometric|scientometric"
     r"|a survey of|survey of the|state of the art|state-of-the-art review)\b",
     re.IGNORECASE,
 )
@@ -81,98 +81,113 @@ class Topic:
     keywords: tuple[str, ...]   # 관련도 채점용 키워드 (소문자)
 
 
+# 도구 키워드. RS·GIS·GeoAI·GeoXAI는 그 자체가 주제가 아니라 계획 문제를
+# 푸는 수단이어야 한다. 주제 키워드와 달리 모든 주제에 공통으로 적용되며,
+# 하나도 걸리지 않는 논문은 후보에서 제외한다(is_on_topic 참조).
+TOOL_KEYWORDS: tuple[str, ...] = (
+    # Remote Sensing
+    "remote sensing", "remotely sensed", "satellite", "earth observation",
+    "sentinel", "landsat", "modis", "hyperspectral", "lidar", "sar ",
+    "aerial imagery", "uav", "google earth engine", "ndvi", "land cover",
+    "land surface temperature", "imagery",
+    # GIS / 공간분석
+    "gis", "geographic information", "geospatial", "spatial analysis",
+    "spatial statistic", "geostatistic", "spatial autocorrelation", "kriging",
+    "spatial regression", "geographically weighted", "spatiotemporal",
+    "spatio-temporal", "cartograph", "raster", "street view",
+    # GeoAI / GeoXAI
+    "machine learning", "deep learning", "neural network", "random forest",
+    "geoai", "foundation model", "explainable", "interpretable", "xai", "shap",
+)
+
+# 도구 사용이 제목에 드러나면 방법론 중심 연구일 가능성이 높다. 소폭 가점만 준다.
+TOOL_TITLE_BONUS = 2.0
+
+
 TOPICS: tuple[Topic, ...] = (
     Topic(
-        key="geoai",
-        label="GeoAI",
-        arxiv='(abs:"GeoAI" OR abs:"geospatial artificial intelligence" OR '
-              '(abs:"deep learning" AND abs:"geospatial"))',
-        scholarly="GeoAI geospatial artificial intelligence deep learning",
-        keywords=("geoai", "geospatial", "spatial", "deep learning", "machine learning",
-                  "neural network", "foundation model", "geographic"),
-    ),
-    Topic(
-        key="geoxai",
-        label="GeoXAI",
-        arxiv='((abs:"explainable" OR abs:"interpretable" OR abs:"XAI") AND '
-              '(abs:"geospatial" OR abs:"spatial" OR abs:"geographic"))',
-        scholarly="explainable AI XAI interpretable machine learning geospatial spatial",
-        keywords=("explainable", "interpretab", "xai", "shap", "attribution",
-                  "geospatial", "spatial", "transparency", "black box"),
+        key="urban-planning",
+        label="도시계획",
+        arxiv='((abs:"urban planning" OR abs:"urban form" OR abs:"built environment" OR '
+              'abs:"smart city" OR abs:"urban heat island") AND '
+              '(abs:"remote sensing" OR abs:"satellite" OR abs:"GIS" OR '
+              'abs:"geospatial" OR abs:"machine learning" OR abs:"deep learning"))',
+        scholarly="urban planning built environment urban form city",
+        keywords=("urban planning", "urban form", "built environment", "city",
+                  "compact city", "urban heat island", "accessibility", "mobility",
+                  "transit", "housing", "neighborhood", "walkability", "urban growth",
+                  "urban sprawl", "zoning", "smart city", "urban design"),
     ),
     Topic(
         key="env-planning",
         label="환경계획",
         arxiv='((abs:"environmental planning" OR abs:"land use planning" OR '
-              'abs:"green infrastructure" OR abs:"ecosystem service"))',
-        scholarly="environmental planning land use planning green infrastructure ecosystem services",
-        keywords=("environmental planning", "land use", "green infrastructure",
-                  "ecosystem service", "landscape", "zoning", "sustainability",
-                  "biodiversity", "watershed"),
-    ),
-    Topic(
-        key="urban-planning",
-        label="도시계획",
-        arxiv='((abs:"urban planning" OR abs:"urban form" OR abs:"smart city" OR '
-              'abs:"built environment"))',
-        scholarly="urban planning urban form built environment smart city",
-        keywords=("urban", "city", "built environment", "planning", "compact city",
-                  "accessibility", "mobility", "housing", "neighborhood", "walkability"),
+              'abs:"green infrastructure" OR abs:"ecosystem service" OR '
+              'abs:"conservation planning") AND '
+              '(abs:"remote sensing" OR abs:"satellite" OR abs:"GIS" OR '
+              'abs:"geospatial" OR abs:"machine learning" OR abs:"deep learning"))',
+        scholarly="environmental planning land use planning green infrastructure "
+                  "ecosystem services landscape",
+        keywords=("environmental planning", "land use planning", "green infrastructure",
+                  "ecosystem service", "landscape planning", "conservation planning",
+                  "biodiversity", "watershed", "habitat", "protected area",
+                  "environmental impact", "sustainability", "restoration",
+                  "urban green space", "blue-green"),
     ),
     Topic(
         key="carbon-neutral",
         label="탄소중립",
         arxiv='((abs:"carbon neutrality" OR abs:"net zero" OR abs:"net-zero" OR '
-              'abs:"decarbonization" OR abs:"decarbonisation"))',
-        scholarly="carbon neutrality net zero decarbonization pathway",
+              'abs:"decarbonization" OR abs:"decarbonisation") AND '
+              '(abs:"remote sensing" OR abs:"satellite" OR abs:"GIS" OR '
+              'abs:"geospatial" OR abs:"machine learning" OR abs:"deep learning"))',
+        scholarly="carbon neutrality net zero decarbonization urban city",
         keywords=("carbon neutral", "net zero", "net-zero", "decarboni",
                   "climate neutral", "emission pathway", "ghg", "greenhouse gas",
-                  "mitigation", "2050"),
+                  "mitigation", "climate action plan", "energy transition", "2050"),
     ),
     Topic(
         key="carbon-reduction",
         label="탄소저감",
         arxiv='((abs:"carbon emission reduction" OR abs:"emission reduction" OR '
-              'abs:"carbon sequestration" OR abs:"carbon sink" OR abs:"carbon storage"))',
+              'abs:"carbon sequestration" OR abs:"carbon sink" OR abs:"carbon storage") AND '
+              '(abs:"remote sensing" OR abs:"satellite" OR abs:"GIS" OR '
+              'abs:"geospatial" OR abs:"machine learning" OR abs:"deep learning"))',
         scholarly="carbon emission reduction carbon sequestration carbon sink urban carbon",
         keywords=("emission reduction", "carbon sequestration", "carbon sink",
-                  "carbon storage", "carbon stock", "co2", "abatement",
-                  "carbon footprint", "offset"),
-    ),
-    Topic(
-        key="gis",
-        label="GIS",
-        arxiv='((abs:"geographic information system" OR abs:"GIS" OR '
-              'abs:"spatial analysis" OR abs:"spatial statistics"))',
-        scholarly="geographic information system GIS spatial analysis spatial statistics",
-        keywords=("gis", "geographic information", "spatial analysis", "spatial statistic",
-                  "geostatistic", "cartograph", "spatial autocorrelation", "kriging",
-                  "spatial data"),
-    ),
-    Topic(
-        key="remote-sensing",
-        label="Remote Sensing",
-        arxiv='((abs:"remote sensing" OR abs:"satellite imagery" OR '
-              'abs:"earth observation" OR abs:"hyperspectral"))',
-        scholarly="remote sensing satellite imagery earth observation land cover",
-        keywords=("remote sensing", "satellite", "earth observation", "sentinel",
-                  "landsat", "hyperspectral", "sar", "lidar", "land cover",
-                  "image classification", "ndvi"),
+                  "carbon storage", "carbon stock", "carbon emission", "co2",
+                  "abatement", "carbon footprint", "offset", "biomass"),
     ),
 )
 
 TOPICS_BY_KEY = {t.key: t for t in TOPICS}
 
+# 6일 주기 순환. 도시계획·환경계획이 메인이므로 각각 3일에 한 번(합쳐서 6일 중
+# 4일) 돌아오고, 탄소 계열은 6일에 한 번씩 든다.
+ROTATION: tuple[str, ...] = (
+    "urban-planning", "env-planning", "carbon-neutral",
+    "urban-planning", "env-planning", "carbon-reduction",
+)
+
 
 def topic_for_date(day: date) -> Topic:
     """날짜 기준 결정론적 주제 순환. 같은 날 재실행해도 같은 주제가 나온다."""
-    return TOPICS[day.toordinal() % len(TOPICS)]
+    return TOPICS_BY_KEY[ROTATION[day.toordinal() % len(ROTATION)]]
 
 
 def rotation_from(day: date) -> list[Topic]:
-    """당일 주제를 선두로 하는 전체 주제 순회 목록 (폴백 순서)."""
-    start = day.toordinal() % len(TOPICS)
-    return [TOPICS[(start + i) % len(TOPICS)] for i in range(len(TOPICS))]
+    """당일 주제를 선두로 하는 순회 목록 (폴백 순서).
+
+    당일 주제에서 전문을 확보하지 못하면 다음 주제로 넘어가므로, 중복 없이
+    모든 주제를 한 번씩 담는다.
+    """
+    start = day.toordinal() % len(ROTATION)
+    order: list[Topic] = []
+    for i in range(len(ROTATION)):
+        topic = TOPICS_BY_KEY[ROTATION[(start + i) % len(ROTATION)]]
+        if topic not in order:
+            order.append(topic)
+    return order
 
 
 # --------------------------------------------------------------------------
@@ -541,10 +556,30 @@ def rejection_reason(paper: Paper, impact: dict[str, float]) -> str:
     return ""
 
 
+def tool_hits(paper: Paper) -> tuple[int, int]:
+    """(제목의 도구 키워드 수, 초록의 도구 키워드 수)."""
+    title_l = paper.title.lower()
+    abstract_l = paper.abstract.lower()
+    return (sum(1 for kw in TOOL_KEYWORDS if kw in title_l),
+            sum(1 for kw in TOOL_KEYWORDS if kw in abstract_l))
+
+
 def is_on_topic(paper: Paper, topic: Topic) -> bool:
-    """주제 관련도 최소 기준. 다른 가점만으로 무관한 논문이 뽑히는 것을 막는다."""
+    """주제 관련도 최소 기준.
+
+    두 조건을 모두 만족해야 한다.
+      1) 계획·탄소 주제어가 충분히 걸릴 것 — 무엇에 관한 연구인가
+      2) 공간분석 도구를 실제로 쓸 것 — 어떻게 푸는가
+
+    2번이 없으면 설문·정책담론만 다룬 계획 이론 논문이 들어오고,
+    1번이 없으면 RS·GIS 자체를 다룬 방법론 논문이 들어온다.
+    """
     title_hits, abstract_hits = keyword_hits(paper, topic)
-    return title_hits >= 1 or abstract_hits >= 2
+    if not (title_hits >= 1 or abstract_hits >= 2):
+        return False
+
+    tool_title, tool_abstract = tool_hits(paper)
+    return tool_title >= 1 or tool_abstract >= 1
 
 
 def score_paper(paper: Paper, topic: Topic, today: date,
@@ -552,6 +587,9 @@ def score_paper(paper: Paper, topic: Topic, today: date,
     """주제 관련도 + 최신성 + 요약 가능성을 합산한 점수."""
     title_hits, abstract_hits = keyword_hits(paper, topic)
     relevance = min(3.0 * title_hits + 1.0 * abstract_hits, 18.0)
+
+    # 도구는 필수 조건이라 이미 걸러져 있다. 제목에까지 드러나면 소폭 가점만.
+    tool_bonus = TOOL_TITLE_BONUS if tool_hits(paper)[0] >= 1 else 0.0
 
     # 최신성. Crossref는 online-first 논문에 미래 issue 날짜를 싣는 경우가 있어
     # 음수 age가 나오면 가점 없이 0으로 처리한다.
@@ -591,7 +629,7 @@ def score_paper(paper: Paper, topic: Topic, today: date,
         if value > 0:
             prestige = min(3.0 * math.log1p(value), PRESTIGE_MAX)
 
-    return relevance + recency + depth + source_bonus + prestige
+    return relevance + recency + depth + source_bonus + prestige + tool_bonus
 
 
 def collect_candidates(topic: Topic, today: date, window_days: int = 240) -> list[Paper]:
