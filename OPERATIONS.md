@@ -59,8 +59,12 @@ tail -f ~/.local/state/daily-paper/run.log
 - **저장소는 public이어야 한다.** private이면 무료 계정에서 Pages가 404다.
 - 논문 API는 가끔 개별적으로 실패한다(arXiv 타임아웃 등). 3개 소스 중 일부만
   실패하면 나머지로 계속 진행하므로 로그에 `실패`가 한 줄 있어도 정상이다.
-- 전문 추출은 `FULLTEXT_CHAR_LIMIT`(`scripts/fulltext.py`, 현재 60,000자)에서
-  잘린다. 긴 논문은 Discussion 이후가 잘려 요약 근거에서 빠질 수 있다.
+- 전문 추출은 `scripts/fulltext.py`의 두 상수로 조절한다.
+  `EXTRACT_CHAR_LIMIT`(400,000자)까지 페이지를 읽어 참고문헌을 떼어낸 뒤,
+  남은 본문을 `FULLTEXT_CHAR_LIMIT`(200,000자)로 자른다. **추출 예산이 최종
+  한도보다 넉넉해야** References 위치를 찾을 수 있다. 예산에서 먼저 멈추면
+  참고문헌 제거가 작동하지 않고 본문이 대신 잘린다.
+  실제로 잘리는 경우 로그에 `한도(...)를 넘어 뒷부분을 자른다`가 남는다.
 
 ## 기준 문서
 
