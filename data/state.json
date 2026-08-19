@@ -17,12 +17,23 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-08-19-quantum-inspired-unitary-pooling-for-multispectral.md"
+    },
+    {
+      "date": "2026-08-19",
+      "topic": "remote-sensing",
+      "title": "Impact comparison of different aerosol types on atmospheric correction of Landsat 8 over land",
+      "doi": "https://doi.org/10.5194/amt-19-5281-2026",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-19-impact-comparison-of-different-aerosol-types-on-atmospheric.md"
     }
   ],
   "keys": [
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.38027/smart.v3n1-10",
+    "doi:10.5194/amt-19-5281-2026",
     "title:053b0d1120027c9f",
-    "title:65d9a303c6573c79"
+    "title:65d9a303c6573c79",
+    "title:d4ab9488c7d0507e"
   ]
 }
