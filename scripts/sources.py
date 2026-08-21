@@ -57,6 +57,73 @@ REVIEW_TITLE_RE = re.compile(
     re.IGNORECASE,
 )
 
+# --------------------------------------------------------------------------
+# 연구 대상지 기준
+# --------------------------------------------------------------------------
+# 한국·미국·중국·유럽에서 수행된 연구만 받는다. 제목과 초록의 지명으로 판정하며,
+# 대상지가 드러나지 않는 논문도 제외한다.
+#
+# 반드시 단어 경계(\b)를 쓴다. 경계가 없으면 "causal"이 "usa"로, "Indiana"가
+# "India"로 잡힌다.
+INCLUDED_REGION_RE = re.compile(
+    r"\b("
+    # 한국
+    r"korea|korean|seoul|busan|incheon|daegu|daejeon|gwangju|ulsan|gyeonggi|jeju|sejong"
+    # 미국 — "american"은 "Latin American"·"African American"과 겹쳐 쓰지 않는다
+    r"|united states|u\.s\.a|u\.s\.|usa\b|california|texas|new york|chicago"
+    r"|los angeles|florida|boston|seattle|philadelphia|houston|phoenix|atlanta"
+    r"|denver|portland|san francisco|detroit|minnesota|michigan|illinois|ohio"
+    r"|oregon|colorado|arizona|massachusetts|pennsylvania|wisconsin|utah"
+    # 중국
+    r"|china|chinese|beijing|shanghai|shenzhen|guangzhou|wuhan|chengdu|chongqing"
+    r"|tianjin|hangzhou|nanjing|suzhou|qingdao|xiamen|yangtze|pearl river delta"
+    r"|yellow river|greater bay area|hong kong"
+    # 유럽 — 국가
+    r"|europe|european|germany|german|france|french|united kingdom|britain|british"
+    r"|england|scotland|wales|spain|spanish|italy|italian|netherlands|dutch"
+    r"|belgium|belgian|poland|polish|sweden|swedish|norway|norwegian|finland"
+    r"|finnish|denmark|danish|portugal|portuguese|greece|greek|austria|austrian"
+    r"|switzerland|swiss|czech|hungary|hungarian|romania|bulgaria|ireland|irish"
+    r"|slovakia|slovenia|croatia|estonia|latvia|lithuania|luxembourg|iceland"
+    # 유럽 — 도시
+    r"|london|paris|berlin|madrid|barcelona|rome|milan|amsterdam|rotterdam"
+    r"|vienna|warsaw|prague|budapest|stockholm|copenhagen|helsinki|oslo|lisbon"
+    r"|athens|munich|hamburg|zurich|brussels|dublin|lyon|naples|turin|valencia"
+    r")\b",
+    re.IGNORECASE,
+)
+
+# 비교 연구에서 대상지를 가리기 위한 목록. 포함 지역보다 많이 언급되면 제외한다.
+EXCLUDED_REGION_RE = re.compile(
+    r"\b("
+    # 남아시아
+    r"india|indian|bangladesh|pakistan|nepal|sri lanka|bhutan"
+    # 아프리카
+    # "African American"은 미국 연구의 표현이므로 아프리카로 세지 않는다
+    r"|africa(?!n\s+american)|african(?!\s+american)|nigeria|kenya|ethiopia"
+    r"|ghana|tanzania|uganda|zambia"
+    r"|zimbabwe|morocco|egypt|algeria|tunisia|sudan|senegal|cameroon|angola"
+    r"|mozambique|botswana|namibia|rwanda|malawi"
+    # 동남아시아
+    r"|indonesia|vietnam|thailand|philippines|malaysia|myanmar|cambodia|laos"
+    # 중남미
+    r"|brazil|brazilian|mexico|mexican|argentina|chile|peru|colombia|bolivia"
+    r"|ecuador|venezuela|paraguay|uruguay|latin america|amazon|patagonia"
+    # 중동·중앙아시아
+    r"|iran|iraq|saudi|jordan|lebanon|syria|yemen|afghanistan|kazakhstan"
+    r"|uzbekistan|mongolia"
+    r")\b",
+    re.IGNORECASE,
+)
+
+# 제목의 지명은 대상지일 확률이 높으므로 초록보다 무겁게 센다.
+REGION_TITLE_WEIGHT = 3
+
+# OpenAlex를 몇 페이지까지 받을지. 대상지 기준을 더하면서 후보가 크게 줄어
+# (도시계획 48 -> 9건) 폭을 넓혔다. 한 페이지는 최대 200건이다.
+OPENALEX_PAGES = 2
+
+
 # 저널 등급 하한 (OpenAlex 2yr_mean_citedness, 임팩트팩터 대응 지표).
 # 실측상 이 선을 넘겨도 전문(OA PDF) 확보율은 떨어지지 않는다.
 # 등급을 조회하지 못한 저널은 배제하지 않고 가점만 0으로 둔다.
@@ -255,10 +322,27 @@ def clean_text(text: str) -> str:
 # HTTP 헬퍼
 # --------------------------------------------------------------------------
 
+# arXiv API는 호출 간격을 3초 이상 두기를 요구한다. find_arxiv_pdf가 후보마다
+# 호출되어 한 번 실행에 최대 15회까지 연달아 나갈 수 있으므로 간격을 강제한다.
+# 지키지 않으면 429가 돌아오고 그날 arXiv 수집이 통째로 실패한다.
+ARXIV_MIN_INTERVAL = 3.0
+_arxiv_last_call = 0.0
+
+
+def _throttle_arxiv() -> None:
+    global _arxiv_last_call
+    wait = ARXIV_MIN_INTERVAL - (time.monotonic() - _arxiv_last_call)
+    if wait > 0:
+        time.sleep(wait)
+    _arxiv_last_call = time.monotonic()
+
+
 def _fetch(url: str, *, retries: int = 3, backoff: float = 2.0) -> bytes:
     last_error: Exception | None = None
     for attempt in range(retries):
         try:
+            if "arxiv.org" in url:
+                _throttle_arxiv()
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
             with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
                 return resp.read()
@@ -337,19 +421,37 @@ def _openalex_abstract(inverted: dict | None) -> str:
     return clean_text(" ".join(word for _, word in positions))
 
 
-def fetch_openalex(topic: Topic, since: date, limit: int = 200) -> list[Paper]:
-    params = urllib.parse.urlencode({
-        "search": topic.scholarly,
-        # is_oa:true — 전문 확인이 목적이므로 open access 논문만 받는다.
-        # 다만 OA라고 전문이 받아지는 것은 아니다(상용 출판사의 봇 차단).
-        # 실제 확보 여부는 select 단계에서 다시 확인한다.
-        "filter": f"from_publication_date:{since.isoformat()},"
-                  f"type:article,has_abstract:true,language:en,is_oa:true",
-        "sort": "publication_date:desc",
-        "per-page": limit,
-        "mailto": "dongbum80@gmail.com",
-    })
-    payload = json.loads(_fetch(f"https://api.openalex.org/works?{params}"))
+def fetch_openalex(topic: Topic, since: date, limit: int = 200,
+                   pages: int = OPENALEX_PAGES) -> list[Paper]:
+    results: list[dict] = []
+    for page in range(1, pages + 1):
+        params = urllib.parse.urlencode({
+            "search": topic.scholarly,
+            # is_oa:true — 전문 확인이 목적이므로 open access 논문만 받는다.
+            # 다만 OA라고 전문이 받아지는 것은 아니다(상용 출판사의 봇 차단).
+            # 실제 확보 여부는 select 단계에서 다시 확인한다.
+            "filter": f"from_publication_date:{since.isoformat()},"
+                      f"type:article,has_abstract:true,language:en,is_oa:true",
+            "sort": "publication_date:desc",
+            "per-page": limit,
+            "page": page,
+            "mailto": "dongbum80@gmail.com",
+        })
+        try:
+            payload = json.loads(_fetch(f"https://api.openalex.org/works?{params}"))
+        except Exception:
+            # 첫 페이지가 실패하면 상위 호출부가 처리하고, 뒤 페이지는 있는
+            # 만큼만 쓴다. 한 페이지 실패로 그날 수집을 통째로 버리지 않는다.
+            if page == 1:
+                raise
+            break
+
+        batch = payload.get("results", [])
+        results.extend(batch)
+        if len(batch) < limit:
+            break
+
+    payload = {"results": results}
 
     papers: list[Paper] = []
     for work in payload.get("results", []):
@@ -525,12 +627,35 @@ def keyword_hits(paper: Paper, topic: Topic) -> tuple[int, int]:
     return title_hits, abstract_hits
 
 
-def rejection_reason(paper: Paper, impact: dict[str, float]) -> str:
-    """저널 품질 기준에 걸리면 그 이유를, 통과하면 빈 문자열을 돌려준다.
+def region_score(paper: Paper) -> tuple[int, int]:
+    """(포함 지역 점수, 제외 지역 점수). 제목의 지명을 3배로 센다."""
+    def count(pattern: re.Pattern) -> int:
+        return (REGION_TITLE_WEIGHT * len(pattern.findall(paper.title))
+                + len(pattern.findall(paper.abstract)))
 
-    arXiv preprint는 저널 게재논문이 아니므로 이 기준을 적용하지 않는다.
-    대신 등급 가점을 받지 못해 자연히 뒤로 밀린다.
+    return count(INCLUDED_REGION_RE), count(EXCLUDED_REGION_RE)
+
+
+def region_ok(paper: Paper) -> bool:
+    """연구 대상지가 한국·미국·중국·유럽인가.
+
+    포함 지역이 한 번도 안 나오면 제외한다. 대상지가 드러나지 않는 논문도
+    여기서 걸린다. 비교 연구는 포함 지역이 제외 지역보다 많이 언급될 때만
+    통과시킨다. 케냐 연구가 참고 문헌 삼아 유럽을 한 번 언급하는 경우를
+    통과시키지 않기 위해서다.
     """
+    included, excluded = region_score(paper)
+    return included >= 1 and included > excluded
+
+
+def rejection_reason(paper: Paper, impact: dict[str, float]) -> str:
+    """게시 기준에 걸리면 그 이유를, 통과하면 빈 문자열을 돌려준다."""
+    # 대상지 기준은 preprint에도 똑같이 적용한다.
+    if not region_ok(paper):
+        return "대상지 제외"
+
+    # 아래 저널 기준은 arXiv preprint에 적용하지 않는다. 저널 게재논문이
+    # 아니므로 판정 대상이 아니고, 등급 가점을 못 받아 자연히 뒤로 밀린다.
     if paper.source == "arxiv":
         return ""
 
