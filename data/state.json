@@ -53,9 +53,19 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-08-21-jaguar-conservation-units-as-an-effective-tool-in-a-payment.md"
+    },
+    {
+      "date": "2026-08-22",
+      "topic": "carbon-neutral",
+      "title": "Gated Multimodal Learning for Interpretable Property Energy Performance Prediction and Retrofit Scenario Analysis",
+      "doi": "",
+      "arxiv_id": "2605.05088v1",
+      "source": "arxiv",
+      "post": "2026-08-22-gated-multimodal-learning-for-interpretable-property-energy.md"
     }
   ],
   "keys": [
+    "arxiv:2605.05088v1",
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1111/acv.70094",
     "doi:10.1186/s12942-026-00483-5",
@@ -63,6 +73,7 @@
     "doi:10.38027/smart.v3n1-10",
     "doi:10.5194/amt-19-5281-2026",
     "title:053b0d1120027c9f",
+    "title:064f1f1dceb854d5",
     "title:088b47a023c108b2",
     "title:65d9a303c6573c79",
     "title:d4ab9488c7d0507e",
