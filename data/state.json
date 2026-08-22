@@ -62,11 +62,21 @@
       "arxiv_id": "2605.05088v1",
       "source": "arxiv",
       "post": "2026-08-22-gated-multimodal-learning-for-interpretable-property-energy.md"
+    },
+    {
+      "date": "2026-08-23",
+      "topic": "urban-planning",
+      "title": "Uncovering the Associations between Human Big Five Personality Traits and Built Environment Characteristics from Street View Imagery",
+      "doi": "https://doi.org/10.1080/24694452.2026.2704575",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-23-uncovering-the-associations-between-human-big-five.md"
     }
   ],
   "keys": [
     "arxiv:2605.05088v1",
     "doi:10.1007/s42484-026-00429-x",
+    "doi:10.1080/24694452.2026.2704575",
     "doi:10.1111/acv.70094",
     "doi:10.1186/s12942-026-00483-5",
     "doi:10.17645/pag.12268",
@@ -76,6 +86,7 @@
     "title:064f1f1dceb854d5",
     "title:088b47a023c108b2",
     "title:65d9a303c6573c79",
+    "title:9ad1b910184f271f",
     "title:d4ab9488c7d0507e",
     "title:ea2ff702b183f1a8",
     "title:eed2dd3c20b2ad4a"
