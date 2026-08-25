@@ -89,6 +89,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-08-25-historical-changes-and-drivers-of-aerosol-acidity-in.md"
+    },
+    {
+      "date": "2026-08-26",
+      "topic": "urban-planning",
+      "title": "Integrating risk and feasibility in the spatial planning of nature-based solutions: a cross-city analysis of Barcelona, Boston, and Rotterdam",
+      "doi": "https://doi.org/10.1038/s42949-026-00461-7",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-26-integrating-risk-and-feasibility-in-the-spatial-planning-of.md"
     }
   ],
   "keys": [
@@ -96,6 +105,7 @@
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1016/j.jenvman.2026.130651",
     "doi:10.1021/acs.est.5c15215",
+    "doi:10.1038/s42949-026-00461-7",
     "doi:10.1080/24694452.2026.2704575",
     "doi:10.1111/acv.70094",
     "doi:10.1186/s12942-026-00483-5",
@@ -111,6 +121,7 @@
     "title:e163731e34fd7154",
     "title:ea2ff702b183f1a8",
     "title:ebb8fa60ef2e27af",
-    "title:eed2dd3c20b2ad4a"
+    "title:eed2dd3c20b2ad4a",
+    "title:f321c7d0a75c3fbb"
   ]
 }
