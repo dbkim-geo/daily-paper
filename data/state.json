@@ -116,6 +116,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-08-28-decarbonization-pathways-of-infrastructure-material-systems.md"
+    },
+    {
+      "date": "2026-08-29",
+      "topic": "urban-planning",
+      "title": "Mismatch between urban eco-sanitation improvement and health service supply capacity: evidence from Chinese city panel data and interpretable machine learning",
+      "doi": "https://doi.org/10.1186/s12913-026-15444-8",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-29-mismatch-between-urban-eco-sanitation-improvement-and.md"
     }
   ],
   "keys": [
@@ -127,6 +136,7 @@
     "doi:10.1080/24694452.2026.2704575",
     "doi:10.1088/2634-4505/ae5e04",
     "doi:10.1111/acv.70094",
+    "doi:10.1186/s12913-026-15444-8",
     "doi:10.1186/s12942-026-00483-5",
     "doi:10.17645/pag.12268",
     "doi:10.38027/smart.v3n1-10",
@@ -138,6 +148,7 @@
     "title:2726b42f004e0f7e",
     "title:65d9a303c6573c79",
     "title:9ad1b910184f271f",
+    "title:a802a9355716019b",
     "title:d4ab9488c7d0507e",
     "title:df087458f426f654",
     "title:e163731e34fd7154",
