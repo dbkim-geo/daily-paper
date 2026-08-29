@@ -125,6 +125,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-08-29-mismatch-between-urban-eco-sanitation-improvement-and.md"
+    },
+    {
+      "date": "2026-08-30",
+      "topic": "env-planning",
+      "title": "Synergistic drivers of Lyme disease emergence in North America: an eco-syndemic review",
+      "doi": "https://doi.org/10.4081/gh.2026.1479",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-30-synergistic-drivers-of-lyme-disease-emergence-in-north.md"
     }
   ],
   "keys": [
@@ -141,11 +150,13 @@
     "doi:10.17645/pag.12268",
     "doi:10.38027/smart.v3n1-10",
     "doi:10.3897/mbmg.10.199829",
+    "doi:10.4081/gh.2026.1479",
     "doi:10.5194/amt-19-5281-2026",
     "title:053b0d1120027c9f",
     "title:064f1f1dceb854d5",
     "title:088b47a023c108b2",
     "title:2726b42f004e0f7e",
+    "title:30c932496e84267b",
     "title:65d9a303c6573c79",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
