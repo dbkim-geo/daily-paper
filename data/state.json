@@ -134,6 +134,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-08-30-synergistic-drivers-of-lyme-disease-emergence-in-north.md"
+    },
+    {
+      "date": "2026-08-31",
+      "topic": "carbon-reduction",
+      "title": "Net ecosystem exchange of extensive green roofs: the role of coupled energy, carbon, and water fluxes quantified by long-term micrometeorological observations",
+      "doi": "https://doi.org/10.5194/bg-23-5035-2026",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-08-31-net-ecosystem-exchange-of-extensive-green-roofs-the-role-of.md"
     }
   ],
   "keys": [
@@ -152,12 +161,14 @@
     "doi:10.3897/mbmg.10.199829",
     "doi:10.4081/gh.2026.1479",
     "doi:10.5194/amt-19-5281-2026",
+    "doi:10.5194/bg-23-5035-2026",
     "title:053b0d1120027c9f",
     "title:064f1f1dceb854d5",
     "title:088b47a023c108b2",
     "title:2726b42f004e0f7e",
     "title:30c932496e84267b",
     "title:65d9a303c6573c79",
+    "title:70c040a62db1f129",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
     "title:d4ab9488c7d0507e",
