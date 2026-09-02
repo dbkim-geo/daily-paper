@@ -161,11 +161,21 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-02-early-outcomes-of-england-s-new-biodiversity-offset-market.md"
+    },
+    {
+      "date": "2026-09-03",
+      "topic": "carbon-neutral",
+      "title": "Uncovering the directionality of innovation in artificial intelligence for energy transitions: A global perspective on the twin transition using patent analysis",
+      "doi": "https://doi.org/10.1016/j.erss.2026.104895",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-03-uncovering-the-directionality-of-innovation-in-artificial.md"
     }
   ],
   "keys": [
     "arxiv:2605.05088v1",
     "doi:10.1007/s42484-026-00429-x",
+    "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
     "doi:10.1021/acs.est.5c15215",
     "doi:10.1038/s42949-026-00461-7",
@@ -190,6 +200,7 @@
     "title:30c932496e84267b",
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
+    "title:8e4f62cacdc62a3c",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
     "title:d4ab9488c7d0507e",
