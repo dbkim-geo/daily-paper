@@ -170,6 +170,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-03-uncovering-the-directionality-of-innovation-in-artificial.md"
+    },
+    {
+      "date": "2026-09-04",
+      "topic": "urban-planning",
+      "title": "The Realization of Re-migration Expectations among Long-Term Migrants in Sweden",
+      "doi": "https://doi.org/10.12765/cpos-2026-16",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-04-the-realization-of-re-migration-expectations-among-long.md"
     }
   ],
   "keys": [
@@ -185,6 +194,7 @@
     "doi:10.1111/cobi.70371",
     "doi:10.1186/s12913-026-15444-8",
     "doi:10.1186/s12942-026-00483-5",
+    "doi:10.12765/cpos-2026-16",
     "doi:10.17645/pag.12268",
     "doi:10.17645/up.12067",
     "doi:10.38027/smart.v3n1-10",
@@ -203,6 +213,7 @@
     "title:8e4f62cacdc62a3c",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
+    "title:bcbb837e03f3a588",
     "title:d4ab9488c7d0507e",
     "title:df087458f426f654",
     "title:e163731e34fd7154",
