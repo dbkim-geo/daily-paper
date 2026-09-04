@@ -179,9 +179,19 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-04-the-realization-of-re-migration-expectations-among-long.md"
+    },
+    {
+      "date": "2026-09-05",
+      "topic": "env-planning",
+      "title": "Automated classification of natural habitats using ground-level imagery",
+      "doi": "",
+      "arxiv_id": "2508.19314v1",
+      "source": "arxiv",
+      "post": "2026-09-05-automated-classification-of-natural-habitats-using-ground.md"
     }
   ],
   "keys": [
+    "arxiv:2508.19314v1",
     "arxiv:2605.05088v1",
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1016/j.erss.2026.104895",
@@ -214,6 +224,7 @@
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
     "title:bcbb837e03f3a588",
+    "title:c43b9053294c070f",
     "title:d4ab9488c7d0507e",
     "title:df087458f426f654",
     "title:e163731e34fd7154",
