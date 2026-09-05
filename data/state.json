@@ -188,11 +188,21 @@
       "arxiv_id": "2508.19314v1",
       "source": "arxiv",
       "post": "2026-09-05-automated-classification-of-natural-habitats-using-ground.md"
+    },
+    {
+      "date": "2026-09-06",
+      "topic": "carbon-reduction",
+      "title": "Foundation-Model Earth Representations Enable Regional-Scale Forest Aboveground Biomass Monitoring Across the Northeastern United States",
+      "doi": "",
+      "arxiv_id": "2607.27217v1",
+      "source": "arxiv",
+      "post": "2026-09-06-foundation-model-earth-representations-enable-regional.md"
     }
   ],
   "keys": [
     "arxiv:2508.19314v1",
     "arxiv:2605.05088v1",
+    "arxiv:2607.27217v1",
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
@@ -232,6 +242,7 @@
     "title:ea2ff702b183f1a8",
     "title:ebb8fa60ef2e27af",
     "title:eed2dd3c20b2ad4a",
-    "title:f321c7d0a75c3fbb"
+    "title:f321c7d0a75c3fbb",
+    "title:f95e701a816e0b78"
   ]
 }
