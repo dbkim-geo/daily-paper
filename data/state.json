@@ -197,6 +197,15 @@
       "arxiv_id": "2607.27217v1",
       "source": "arxiv",
       "post": "2026-09-06-foundation-model-earth-representations-enable-regional.md"
+    },
+    {
+      "date": "2026-09-07",
+      "topic": "urban-planning",
+      "title": "Control, Communication and the Emotional Construction of Home: The Role of Home Improvements in Supporting Ageing-in-Place",
+      "doi": "https://doi.org/10.1080/14036096.2026.2719616",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-07-control-communication-and-the-emotional-construction-of.md"
     }
   ],
   "keys": [
@@ -208,6 +217,7 @@
     "doi:10.1016/j.jenvman.2026.130651",
     "doi:10.1021/acs.est.5c15215",
     "doi:10.1038/s42949-026-00461-7",
+    "doi:10.1080/14036096.2026.2719616",
     "doi:10.1080/24694452.2026.2704575",
     "doi:10.1088/2634-4505/ae5e04",
     "doi:10.1111/acv.70094",
@@ -222,6 +232,7 @@
     "doi:10.4081/gh.2026.1479",
     "doi:10.5194/amt-19-5281-2026",
     "doi:10.5194/bg-23-5035-2026",
+    "title:0507276bc4e56564",
     "title:053b0d1120027c9f",
     "title:064f1f1dceb854d5",
     "title:088b47a023c108b2",
