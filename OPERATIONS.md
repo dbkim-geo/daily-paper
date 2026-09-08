@@ -183,7 +183,10 @@ public domain)일 때만 싣는다. **ND(변경 금지) 계열과 라이선스 �
 ## 손으로 돌리기
 
 ```bash
-# 커밋·푸시 없이 선정~렌더링까지만 (결과는 _posts/ 에 생기므로 확인 후 지운다)
+# 커밋·푸시 없이 선정~렌더링까지만.
+# 생성된 포스트는 ~/.local/state/daily-paper/last_dry_run.md 에 남기고
+# 작업 트리는 자동으로 원복한다. 되돌리지 않으면 다음 정규 실행이
+# dry run 산출물을 그대로 커밋해 버린다.
 DRY_RUN=1 scripts/run_daily.sh
 
 # 실제로 한 편 게시

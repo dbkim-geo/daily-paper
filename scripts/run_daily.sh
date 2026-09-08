@@ -115,7 +115,14 @@ post=$(git status --porcelain _posts | awk '/^\?\?/ {print $2}' | head -1)
 slug=$(basename "$post" .md)
 
 if [ "${DRY_RUN:-0}" = "1" ]; then
-    log "DRY_RUN: 커밋·푸시를 건너뛴다. 생성된 포스트: $post"
+    # write 단계가 이미 포스트를 만들고 state.json을 갱신했다. 그대로 두면
+    # 다음 정규 실행이 이 산출물을 커밋해 버리므로 반드시 되돌린다.
+    log "DRY_RUN: 생성된 포스트를 확인 후 되돌린다 -> $post"
+    cp "$post" "$STATE_DIR/last_dry_run.md" 2>/dev/null
+    rm -f "$post"
+    [ -n "$slug" ] && rm -f "assets/figures/$slug.png"
+    git checkout -- data/state.json
+    log "DRY_RUN: 산출물을 $STATE_DIR/last_dry_run.md 에 남기고 작업 트리를 원복했다"
     log "=== 종료 (dry run) ==="
     exit 0
 fi
