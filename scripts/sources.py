@@ -50,6 +50,21 @@ EXCLUDED_JOURNAL_RE = re.compile(
 
 # 리뷰 논문 제외. OpenAlex의 type:article 필터가 review 타입을 이미 거르지만,
 # 리뷰인데 article로 분류되는 경우가 있어 제목으로 한 번 더 막는다.
+#
+# 제목만으로는 부족하다. "Biodiversity and chemical regulation: Status quo,
+# data gaps, and recommendations"처럼 리뷰라는 말 없이 리뷰인 제목이 있다.
+# 그래서 초록의 자기서술("we review", "this review")도 함께 본다.
+# 단순히 "review"만 찾으면 peer review 언급에도 걸리므로 구를 지정한다.
+REVIEW_ABSTRACT_RE = re.compile(
+    r"\b(this (systematic |scoping |narrative |critical |comprehensive )?review\b"
+    r"|we (systematically )?review\b"
+    r"|this (paper|article|study|work) reviews\b"
+    r"|reviews? the (existing|current|available|published) literature"
+    r"|a (systematic|scoping|narrative|literature|comprehensive) review\b"
+    r"|review article\b"
+    r"|we synthesi[sz]e the literature)",
+    re.IGNORECASE,
+)
 REVIEW_TITLE_RE = re.compile(
     r"\b(a review|the review|review of|reviews of|systematic review|literature review"
     r"|scoping review|narrative review|meta-analysis|meta analysis|bibliometric|scientometric"
@@ -662,10 +677,11 @@ def rejection_reason(paper: Paper, impact: dict[str, float]) -> str:
     if not region_ok(paper):
         return "대상지 제외"
 
-    # 아래 저널 기준은 arXiv preprint에 적용하지 않는다. 저널 게재논문이
-    # 아니므로 판정 대상이 아니고, 등급 가점을 못 받아 자연히 뒤로 밀린다.
+    # preprint는 동료심사를 거치지 않았으므로 받지 않는다. 필터를 조일수록
+    # 저널 논문은 출판사 봇 차단에 막히고 preprint는 안 막혀서, 그냥 두면
+    # preprint가 상위를 차지한다.
     if paper.source == "arxiv":
-        return ""
+        return "preprint"
 
     haystack = paper.publisher.lower()
     for name in EXCLUDED_PUBLISHERS:
@@ -679,7 +695,7 @@ def rejection_reason(paper: Paper, impact: dict[str, float]) -> str:
     if paper.venue_type and paper.venue_type != "journal":
         return f"비저널 매체({paper.venue_type})"
 
-    if REVIEW_TITLE_RE.search(paper.title):
+    if REVIEW_TITLE_RE.search(paper.title) or REVIEW_ABSTRACT_RE.search(paper.abstract):
         return "리뷰 논문"
 
     if paper.journal_id and paper.journal_id in impact:
@@ -776,8 +792,10 @@ def collect_candidates(topic: Topic, today: date, window_days: int = 240) -> lis
     since = today - timedelta(days=window_days)
     papers: list[Paper] = []
 
+    # arXiv는 후보 수집원에서 뺐다. preprint를 받지 않기로 했으므로 어차피
+    # 전부 탈락하고, 호출 간격 제한만 소모한다. 같은 논문의 arXiv 사본을
+    # 전문 확보에 쓰는 find_arxiv_pdf는 그대로 둔다.
     for name, fn in (
-        ("arxiv", lambda: fetch_arxiv(topic)),
         ("openalex", lambda: fetch_openalex(topic, since)),
         ("crossref", lambda: fetch_crossref(topic, since)),
     ):
