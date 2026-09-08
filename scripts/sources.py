@@ -455,7 +455,11 @@ def fetch_openalex(topic: Topic, since: date, limit: int = 200,
             # 실제 확보 여부는 select 단계에서 다시 확인한다.
             "filter": f"from_publication_date:{since.isoformat()},"
                       f"type:article,has_abstract:true,language:en,is_oa:true",
-            "sort": "publication_date:desc",
+            # 관련도순으로 받는다. 최신순으로 받으면 느슨하게 매칭된 1만여 건
+            # 중 최신 600건을 가져와 대부분이 주제와 멀다(실측 통과율 0~2%).
+            # 관련도순은 같은 600건에서 6~7%가 통과한다. 최신성은 score_paper의
+            # recency 항이 따로 반영하므로 수집까지 최신순일 이유가 없다.
+            "sort": "relevance_score:desc",
             "per-page": limit,
             "page": page,
             "mailto": "dongbum80@gmail.com",
