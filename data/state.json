@@ -224,6 +224,15 @@
       "arxiv_id": "2606.06986v1",
       "source": "arxiv",
       "post": "2026-09-09-heterogeneous-effects-of-green-finance-on-urban.md"
+    },
+    {
+      "date": "2026-09-09",
+      "topic": "urban-planning",
+      "title": "Building level heat-health risk assessment in a three-dimensional and deprived built environment in Hong Kong",
+      "doi": "https://doi.org/10.1038/s42949-025-00332-7",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-09-building-level-heat-health-risk-assessment-in-a-three.md"
     }
   ],
   "keys": [
@@ -235,6 +244,7 @@
     "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
     "doi:10.1021/acs.est.5c15215",
+    "doi:10.1038/s42949-025-00332-7",
     "doi:10.1038/s42949-026-00461-7",
     "doi:10.1080/14036096.2026.2719616",
     "doi:10.1080/24694452.2026.2704575",
@@ -272,6 +282,7 @@
     "title:df087458f426f654",
     "title:e163731e34fd7154",
     "title:e4a722bd4fbd0c64",
+    "title:e66ac75d978f982c",
     "title:ea2ff702b183f1a8",
     "title:ebb8fa60ef2e27af",
     "title:eed2dd3c20b2ad4a",
