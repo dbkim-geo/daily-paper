@@ -119,9 +119,9 @@ EXCLUDED_REGION_RE = re.compile(
 # 제목의 지명은 대상지일 확률이 높으므로 초록보다 무겁게 센다.
 REGION_TITLE_WEIGHT = 3
 
-# OpenAlex를 몇 페이지까지 받을지. 대상지 기준을 더하면서 후보가 크게 줄어
-# (도시계획 48 -> 9건) 폭을 넓혔다. 한 페이지는 최대 200건이다.
-OPENALEX_PAGES = 2
+# OpenAlex를 몇 페이지까지 받을지. 대상지 기준과 도구 게이트를 더하면서 후보가
+# 크게 줄어(도시계획 48 -> 6건) 폭을 넓혔다. 한 페이지는 최대 200건이다.
+OPENALEX_PAGES = 3
 
 
 # 저널 등급 하한 (OpenAlex 2yr_mean_citedness, 임팩트팩터 대응 지표).
@@ -154,7 +154,7 @@ class Topic:
 TOOL_KEYWORDS: tuple[str, ...] = (
     # Remote Sensing
     "remote sensing", "remotely sensed", "satellite", "earth observation",
-    "sentinel", "landsat", "modis", "hyperspectral", "lidar", "sar ",
+    "sentinel", "landsat", "modis", "hyperspectral", "lidar", "sar",
     "aerial imagery", "uav", "google earth engine", "ndvi", "land cover",
     "land surface temperature", "imagery",
     # GIS / 공간분석
@@ -165,6 +165,14 @@ TOOL_KEYWORDS: tuple[str, ...] = (
     # GeoAI / GeoXAI
     "machine learning", "deep learning", "neural network", "random forest",
     "geoai", "foundation model", "explainable", "interpretable", "xai", "shap",
+)
+
+# 부분 문자열로 찾으면 "gis"가 registration/logistic에, "shap"이 shape/shaping에
+# 걸린다. 실제로 이 때문에 공간분석을 전혀 쓰지 않은 사회조사 논문이 여러 편
+# 게시됐다. 반드시 단어 경계로 판정한다.
+TOOL_RE = re.compile(
+    r"\b(" + "|".join(re.escape(k) for k in TOOL_KEYWORDS) + r")\b",
+    re.IGNORECASE,
 )
 
 # 도구 사용이 제목에 드러나면 방법론 중심 연구일 가능성이 높다. 소폭 가점만 준다.
@@ -682,11 +690,15 @@ def rejection_reason(paper: Paper, impact: dict[str, float]) -> str:
 
 
 def tool_hits(paper: Paper) -> tuple[int, int]:
-    """(제목의 도구 키워드 수, 초록의 도구 키워드 수)."""
-    title_l = paper.title.lower()
-    abstract_l = paper.abstract.lower()
-    return (sum(1 for kw in TOOL_KEYWORDS if kw in title_l),
-            sum(1 for kw in TOOL_KEYWORDS if kw in abstract_l))
+    """(제목의 도구 키워드 종류 수, 초록의 도구 키워드 종류 수).
+
+    같은 낱말이 여러 번 나와도 한 번으로 센다. 서로 다른 도구 용어가
+    여럿 나오는 쪽이 실제로 그 방법을 쓴 연구일 확률이 높다.
+    """
+    def distinct(text: str) -> int:
+        return len({m.lower() for m in TOOL_RE.findall(text)})
+
+    return distinct(paper.title), distinct(paper.abstract)
 
 
 def is_on_topic(paper: Paper, topic: Topic) -> bool:
@@ -703,8 +715,10 @@ def is_on_topic(paper: Paper, topic: Topic) -> bool:
     if not (title_hits >= 1 or abstract_hits >= 2):
         return False
 
+    # 초록에 한 낱말이 스쳐 나오는 정도로는 통과시키지 않는다. 제목에 드러나거나,
+    # 서로 다른 도구 용어가 둘 이상 나와야 실제로 그 방법을 쓴 연구로 본다.
     tool_title, tool_abstract = tool_hits(paper)
-    return tool_title >= 1 or tool_abstract >= 1
+    return tool_title >= 1 or tool_abstract >= 2
 
 
 def score_paper(paper: Paper, topic: Topic, today: date,
@@ -784,7 +798,15 @@ def collect_candidates(topic: Topic, today: date, window_days: int = 240) -> lis
     for paper in papers:
         if not paper.title or not paper.abstract:
             continue
-        if not is_on_topic(paper, topic):
+
+        title_hits, abstract_hits = keyword_hits(paper, topic)
+        if not (title_hits >= 1 or abstract_hits >= 2):
+            rejected["주제 무관"] = rejected.get("주제 무관", 0) + 1
+            continue
+
+        tool_title, tool_abstract = tool_hits(paper)
+        if not (tool_title >= 1 or tool_abstract >= 2):
+            rejected["도구 미사용"] = rejected.get("도구 미사용", 0) + 1
             continue
 
         reason = rejection_reason(paper, impact)
