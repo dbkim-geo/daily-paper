@@ -233,6 +233,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-09-building-level-heat-health-risk-assessment-in-a-three.md"
+    },
+    {
+      "date": "2026-09-10",
+      "topic": "urban-planning",
+      "title": "An open-source GIS user interface for the TARGET climate model in the Urban Multi-scale Environmental Predictor (UMEP) tool",
+      "doi": "https://doi.org/10.1016/j.envsoft.2026.107043",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-10-an-open-source-gis-user-interface-for-the-target-climate.md"
     }
   ],
   "keys": [
@@ -241,6 +250,7 @@
     "arxiv:2606.06986v1",
     "arxiv:2607.27217v1",
     "doi:10.1007/s42484-026-00429-x",
+    "doi:10.1016/j.envsoft.2026.107043",
     "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
     "doi:10.1021/acs.est.5c15215",
@@ -273,6 +283,7 @@
     "title:51a0a3ad74a2b98f",
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
+    "title:7e782d690a87fdff",
     "title:8e4f62cacdc62a3c",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
