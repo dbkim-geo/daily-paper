@@ -242,6 +242,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-10-an-open-source-gis-user-interface-for-the-target-climate.md"
+    },
+    {
+      "date": "2026-09-12",
+      "topic": "urban-planning",
+      "title": "Cooling effect of urban green spaces: LCZ-based assessment comparing four cities at similar latitudes via hotspot and regression models",
+      "doi": "https://doi.org/10.1007/s00484-026-03172-x",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-12-cooling-effect-of-urban-green-spaces-lcz-based-assessment.md"
     }
   ],
   "keys": [
@@ -249,6 +258,7 @@
     "arxiv:2605.05088v1",
     "arxiv:2606.06986v1",
     "arxiv:2607.27217v1",
+    "doi:10.1007/s00484-026-03172-x",
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1016/j.envsoft.2026.107043",
     "doi:10.1016/j.erss.2026.104895",
@@ -280,6 +290,7 @@
     "title:2726b42f004e0f7e",
     "title:27876e7ea7f1bea6",
     "title:30c932496e84267b",
+    "title:4851364b0895dfe7",
     "title:51a0a3ad74a2b98f",
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
