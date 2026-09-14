@@ -76,6 +76,13 @@ def extract_author_keywords(text: str) -> list[str]:
         if len(keywords) >= 12:
             break
 
+    # 일부 PDF는 텍스트 추출에서 공백이 통째로 소실된다("GIS analysis" ->
+    # "GISanalysis"). 그대로 실으면 깨져 보이므로, 공백 없는 긴 낱말이
+    # 절반을 넘으면 그 논문의 키워드는 신뢰하지 않고 버린다.
+    glued = sum(1 for w in keywords if " " not in w and len(w) > 14)
+    if keywords and glued * 2 > len(keywords):
+        return []
+
     # 한두 개만 잡혔다면 오탐일 가능성이 높다.
     return keywords if len(keywords) >= 3 else []
 

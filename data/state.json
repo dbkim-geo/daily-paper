@@ -251,6 +251,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-12-cooling-effect-of-urban-green-spaces-lcz-based-assessment.md"
+    },
+    {
+      "date": "2026-09-14",
+      "topic": "env-planning",
+      "title": "A Machine Learning Approach to Adapt Local Land Use Planning to Climate Change",
+      "doi": "https://doi.org/10.17645/up.8562",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-14-a-machine-learning-approach-to-adapt-local-land-use.md"
     }
   ],
   "keys": [
@@ -277,6 +286,7 @@
     "doi:10.12765/cpos-2026-16",
     "doi:10.17645/pag.12268",
     "doi:10.17645/up.12067",
+    "doi:10.17645/up.8562",
     "doi:10.38027/smart.v3n1-10",
     "doi:10.3897/mbmg.10.199829",
     "doi:10.4081/gh.2026.1479",
@@ -295,6 +305,7 @@
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
     "title:7e782d690a87fdff",
+    "title:8b353d6026d9a3ff",
     "title:8e4f62cacdc62a3c",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
