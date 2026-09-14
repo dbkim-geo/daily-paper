@@ -260,6 +260,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-14-a-machine-learning-approach-to-adapt-local-land-use.md"
+    },
+    {
+      "date": "2026-09-15",
+      "topic": "carbon-neutral",
+      "title": "Home or workplace charging? Spatio-temporal flexibility of electric vehicles within Swiss electricity system",
+      "doi": "https://doi.org/10.1016/j.energy.2025.135452",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-15-home-or-workplace-charging-spatio-temporal-flexibility-of.md"
     }
   ],
   "keys": [
@@ -269,6 +278,7 @@
     "arxiv:2607.27217v1",
     "doi:10.1007/s00484-026-03172-x",
     "doi:10.1007/s42484-026-00429-x",
+    "doi:10.1016/j.energy.2025.135452",
     "doi:10.1016/j.envsoft.2026.107043",
     "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
@@ -309,6 +319,7 @@
     "title:8e4f62cacdc62a3c",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
+    "title:ad0ec0fa4bc1ad50",
     "title:bcbb837e03f3a588",
     "title:c43b9053294c070f",
     "title:d4ab9488c7d0507e",
