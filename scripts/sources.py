@@ -791,7 +791,7 @@ def score_paper(paper: Paper, topic: Topic, today: date,
     return relevance + recency + depth + source_bonus + prestige + tool_bonus
 
 
-def collect_candidates(topic: Topic, today: date, window_days: int = 240) -> list[Paper]:
+def collect_candidates(topic: Topic, today: date, window_days: int = 730) -> list[Paper]:
     """한 주제에 대해 3개 소스에서 후보를 모아 채점·정렬한다."""
     since = today - timedelta(days=window_days)
     papers: list[Paper] = []

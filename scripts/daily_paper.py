@@ -281,8 +281,8 @@ def main() -> int:
     def add_selection_args(p: argparse.ArgumentParser) -> None:
         p.add_argument("--date", help="게시 날짜 (YYYY-MM-DD, 기본: 오늘 KST)")
         p.add_argument("--topic", help="주제 고정 (예: geoai, gis, carbon-neutral)")
-        p.add_argument("--window-days", type=int, default=240,
-                       help="저널 논문 검색 기간(일). 기본 240")
+        p.add_argument("--window-days", type=int, default=730,
+                       help="저널 논문 검색 기간(일). 기본 730 (최근 2년)")
         p.add_argument("--no-fulltext", action="store_true",
                        help="PDF 전문 추출을 건너뛰고 초록만 사용한다")
 
