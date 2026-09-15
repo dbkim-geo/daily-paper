@@ -269,6 +269,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-15-home-or-workplace-charging-spatio-temporal-flexibility-of.md"
+    },
+    {
+      "date": "2026-09-16",
+      "topic": "urban-planning",
+      "title": "Perceived leisure service benefits of peri-urban community green Spaces: Impact of visual environment during day and night",
+      "doi": "https://doi.org/10.1016/j.landurbplan.2025.105338",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-16-perceived-leisure-service-benefits-of-peri-urban-community.md"
     }
   ],
   "keys": [
@@ -282,6 +291,7 @@
     "doi:10.1016/j.envsoft.2026.107043",
     "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
+    "doi:10.1016/j.landurbplan.2025.105338",
     "doi:10.1021/acs.est.5c15215",
     "doi:10.1038/s42949-025-00332-7",
     "doi:10.1038/s42949-026-00461-7",
@@ -319,6 +329,7 @@
     "title:8e4f62cacdc62a3c",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
+    "title:abcda52017a26bc6",
     "title:ad0ec0fa4bc1ad50",
     "title:bcbb837e03f3a588",
     "title:c43b9053294c070f",
