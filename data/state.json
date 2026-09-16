@@ -278,6 +278,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-16-perceived-leisure-service-benefits-of-peri-urban-community.md"
+    },
+    {
+      "date": "2026-09-17",
+      "topic": "env-planning",
+      "title": "Impact of green and blue spaces on ecosystem services in Beijing: spatiotemporal dynamics and driving mechanisms",
+      "doi": "https://doi.org/10.1017/sus.2025.10009",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-17-impact-of-green-and-blue-spaces-on-ecosystem-services-in.md"
     }
   ],
   "keys": [
@@ -292,6 +301,7 @@
     "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
     "doi:10.1016/j.landurbplan.2025.105338",
+    "doi:10.1017/sus.2025.10009",
     "doi:10.1021/acs.est.5c15215",
     "doi:10.1038/s42949-025-00332-7",
     "doi:10.1038/s42949-026-00461-7",
@@ -331,6 +341,7 @@
     "title:a802a9355716019b",
     "title:abcda52017a26bc6",
     "title:ad0ec0fa4bc1ad50",
+    "title:b6f97ac6c7d0744d",
     "title:bcbb837e03f3a588",
     "title:c43b9053294c070f",
     "title:d4ab9488c7d0507e",
