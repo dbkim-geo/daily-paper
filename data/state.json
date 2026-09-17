@@ -287,6 +287,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-17-impact-of-green-and-blue-spaces-on-ecosystem-services-in.md"
+    },
+    {
+      "date": "2026-09-18",
+      "topic": "carbon-reduction",
+      "title": "Beyond MRV: combining remote sensing and ecosystem modeling for geospatial monitoring and attribution of forest carbon fluxes over Maryland, USA",
+      "doi": "https://doi.org/10.1088/1748-9326/ad9035",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-18-beyond-mrv-combining-remote-sensing-and-ecosystem-modeling.md"
     }
   ],
   "keys": [
@@ -307,6 +316,7 @@
     "doi:10.1038/s42949-026-00461-7",
     "doi:10.1080/14036096.2026.2719616",
     "doi:10.1080/24694452.2026.2704575",
+    "doi:10.1088/1748-9326/ad9035",
     "doi:10.1088/2634-4505/ae5e04",
     "doi:10.1093/inteam/vjag145",
     "doi:10.1111/acv.70094",
@@ -329,6 +339,7 @@
     "title:1fd1c2c6cf13fad3",
     "title:2726b42f004e0f7e",
     "title:27876e7ea7f1bea6",
+    "title:2e14e61a61bde527",
     "title:30c932496e84267b",
     "title:4851364b0895dfe7",
     "title:51a0a3ad74a2b98f",
