@@ -296,6 +296,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-18-beyond-mrv-combining-remote-sensing-and-ecosystem-modeling.md"
+    },
+    {
+      "date": "2026-09-19",
+      "topic": "urban-planning",
+      "title": "Leveraging Local Digital Twins for planning age-friendly urban environments",
+      "doi": "https://doi.org/10.1016/j.cities.2024.105458",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-19-leveraging-local-digital-twins-for-planning-age-friendly.md"
     }
   ],
   "keys": [
@@ -305,6 +314,7 @@
     "arxiv:2607.27217v1",
     "doi:10.1007/s00484-026-03172-x",
     "doi:10.1007/s42484-026-00429-x",
+    "doi:10.1016/j.cities.2024.105458",
     "doi:10.1016/j.energy.2025.135452",
     "doi:10.1016/j.envsoft.2026.107043",
     "doi:10.1016/j.erss.2026.104895",
@@ -348,6 +358,7 @@
     "title:7e782d690a87fdff",
     "title:8b353d6026d9a3ff",
     "title:8e4f62cacdc62a3c",
+    "title:96fe907584768adb",
     "title:9ad1b910184f271f",
     "title:a802a9355716019b",
     "title:abcda52017a26bc6",
