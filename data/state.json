@@ -305,6 +305,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-19-leveraging-local-digital-twins-for-planning-age-friendly.md"
+    },
+    {
+      "date": "2026-09-20",
+      "topic": "env-planning",
+      "title": "Biodiversity Change in Cultural Landscapes—The Rural Hotspot Hypothesis",
+      "doi": "https://doi.org/10.1002/ece3.70811",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-20-biodiversity-change-in-cultural-landscapesthe-rural-hotspot.md"
     }
   ],
   "keys": [
@@ -312,6 +321,7 @@
     "arxiv:2605.05088v1",
     "arxiv:2606.06986v1",
     "arxiv:2607.27217v1",
+    "doi:10.1002/ece3.70811",
     "doi:10.1007/s00484-026-03172-x",
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1016/j.cities.2024.105458",
@@ -353,6 +363,7 @@
     "title:30c932496e84267b",
     "title:4851364b0895dfe7",
     "title:51a0a3ad74a2b98f",
+    "title:5ae673f97cd058cf",
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
     "title:7e782d690a87fdff",
