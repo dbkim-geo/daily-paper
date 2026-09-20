@@ -314,6 +314,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-20-biodiversity-change-in-cultural-landscapesthe-rural-hotspot.md"
+    },
+    {
+      "date": "2026-09-21",
+      "topic": "carbon-reduction",
+      "title": "Assessing the effect of forest management on above-ground carbon stock by remote sensing",
+      "doi": "https://doi.org/10.5194/bg-22-4291-2025",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-09-21-assessing-the-effect-of-forest-management-on-above-ground.md"
     }
   ],
   "keys": [
@@ -351,6 +360,7 @@
     "doi:10.3897/mbmg.10.199829",
     "doi:10.4081/gh.2026.1479",
     "doi:10.5194/amt-19-5281-2026",
+    "doi:10.5194/bg-22-4291-2025",
     "doi:10.5194/bg-23-5035-2026",
     "title:0507276bc4e56564",
     "title:053b0d1120027c9f",
@@ -364,6 +374,7 @@
     "title:4851364b0895dfe7",
     "title:51a0a3ad74a2b98f",
     "title:5ae673f97cd058cf",
+    "title:5c4b2e478953917d",
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
     "title:7e782d690a87fdff",
