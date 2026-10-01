@@ -323,6 +323,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-09-21-assessing-the-effect-of-forest-management-on-above-ground.md"
+    },
+    {
+      "date": "2026-10-02",
+      "topic": "env-planning",
+      "title": "The Disappearing Green: Ecosystem Service Loss in Atlanta, Georgia",
+      "doi": "https://doi.org/10.55845/jos-2025-1289",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-10-02-the-disappearing-green-ecosystem-service-loss-in-atlanta.md"
     }
   ],
   "keys": [
@@ -362,6 +371,7 @@
     "doi:10.5194/amt-19-5281-2026",
     "doi:10.5194/bg-22-4291-2025",
     "doi:10.5194/bg-23-5035-2026",
+    "doi:10.55845/jos-2025-1289",
     "title:0507276bc4e56564",
     "title:053b0d1120027c9f",
     "title:064f1f1dceb854d5",
@@ -378,6 +388,7 @@
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
     "title:7e782d690a87fdff",
+    "title:8030325dd363196d",
     "title:8b353d6026d9a3ff",
     "title:8e4f62cacdc62a3c",
     "title:96fe907584768adb",
