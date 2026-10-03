@@ -332,6 +332,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-10-02-the-disappearing-green-ecosystem-service-loss-in-atlanta.md"
+    },
+    {
+      "date": "2026-10-04",
+      "topic": "carbon-reduction",
+      "title": "Spatio-Temporal Disparity of Ecosystem Carbon Sequestration Capacity in the Region of Chengde, China",
+      "doi": "https://doi.org/10.15244/pjoes/192374",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-10-04-spatio-temporal-disparity-of-ecosystem-carbon-sequestration.md"
     }
   ],
   "keys": [
@@ -362,6 +371,7 @@
     "doi:10.1186/s12913-026-15444-8",
     "doi:10.1186/s12942-026-00483-5",
     "doi:10.12765/cpos-2026-16",
+    "doi:10.15244/pjoes/192374",
     "doi:10.17645/pag.12268",
     "doi:10.17645/up.12067",
     "doi:10.17645/up.8562",
@@ -404,6 +414,7 @@
     "title:e163731e34fd7154",
     "title:e4a722bd4fbd0c64",
     "title:e66ac75d978f982c",
+    "title:e7e1093f182cb676",
     "title:ea2ff702b183f1a8",
     "title:ebb8fa60ef2e27af",
     "title:eed2dd3c20b2ad4a",
