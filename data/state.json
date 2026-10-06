@@ -341,6 +341,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-10-04-spatio-temporal-disparity-of-ecosystem-carbon-sequestration.md"
+    },
+    {
+      "date": "2026-10-07",
+      "topic": "urban-planning",
+      "title": "AI-Assisted Planning for Sustainable Urbanism: Mapping Urban Livability in a Contemporary American City through Tree Coverage",
+      "doi": "https://doi.org/10.25034/ijcua.2026.v10n2-5",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-10-07-ai-assisted-planning-for-sustainable-urbanism-mapping-urban.md"
     }
   ],
   "keys": [
@@ -375,6 +384,7 @@
     "doi:10.17645/pag.12268",
     "doi:10.17645/up.12067",
     "doi:10.17645/up.8562",
+    "doi:10.25034/ijcua.2026.v10n2-5",
     "doi:10.38027/smart.v3n1-10",
     "doi:10.3897/mbmg.10.199829",
     "doi:10.4081/gh.2026.1479",
@@ -397,6 +407,7 @@
     "title:5c4b2e478953917d",
     "title:65d9a303c6573c79",
     "title:70c040a62db1f129",
+    "title:7d9628b7fe8699dd",
     "title:7e782d690a87fdff",
     "title:8030325dd363196d",
     "title:8b353d6026d9a3ff",
