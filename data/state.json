@@ -350,6 +350,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-10-07-ai-assisted-planning-for-sustainable-urbanism-mapping-urban.md"
+    },
+    {
+      "date": "2026-10-09",
+      "topic": "urban-planning",
+      "title": "Unraveling nonlinear impacts of seasonal climate and built environments on exercise walking in high-density cities via a modified machine learning approach",
+      "doi": "https://doi.org/10.1186/s12942-026-00453-x",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-10-09-unraveling-nonlinear-impacts-of-seasonal-climate-and-built.md"
     }
   ],
   "keys": [
@@ -378,6 +387,7 @@
     "doi:10.1111/acv.70094",
     "doi:10.1111/cobi.70371",
     "doi:10.1186/s12913-026-15444-8",
+    "doi:10.1186/s12942-026-00453-x",
     "doi:10.1186/s12942-026-00483-5",
     "doi:10.12765/cpos-2026-16",
     "doi:10.15244/pjoes/192374",
@@ -392,6 +402,7 @@
     "doi:10.5194/bg-22-4291-2025",
     "doi:10.5194/bg-23-5035-2026",
     "doi:10.55845/jos-2025-1289",
+    "title:0187ba0a519d131d",
     "title:0507276bc4e56564",
     "title:053b0d1120027c9f",
     "title:064f1f1dceb854d5",
