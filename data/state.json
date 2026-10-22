@@ -368,6 +368,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-10-15-leveraging-open-source-land-use-and-land-cover-data-for.md"
+    },
+    {
+      "date": "2026-10-23",
+      "topic": "urban-planning",
+      "title": "Urban forms across continents: A data-driven comparison of Lausanne and Philadelphia",
+      "doi": "https://doi.org/10.1016/j.trip.2025.101823",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-10-23-urban-forms-across-continents-a-data-driven-comparison-of.md"
     }
   ],
   "keys": [
@@ -384,6 +393,7 @@
     "doi:10.1016/j.erss.2026.104895",
     "doi:10.1016/j.jenvman.2026.130651",
     "doi:10.1016/j.landurbplan.2025.105338",
+    "doi:10.1016/j.trip.2025.101823",
     "doi:10.1017/sus.2025.10009",
     "doi:10.1021/acs.est.5c15215",
     "doi:10.1038/s42949-025-00332-7",
@@ -448,6 +458,7 @@
     "title:e4a722bd4fbd0c64",
     "title:e66ac75d978f982c",
     "title:e7e1093f182cb676",
+    "title:e9605a2cdecc30cf",
     "title:ea2ff702b183f1a8",
     "title:ebb8fa60ef2e27af",
     "title:eed2dd3c20b2ad4a",
