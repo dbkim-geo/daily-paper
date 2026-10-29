@@ -377,6 +377,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-10-23-urban-forms-across-continents-a-data-driven-comparison-of.md"
+    },
+    {
+      "date": "2026-10-30",
+      "topic": "carbon-reduction",
+      "title": "STUDY ON CALCULATING NET CARBON SINKS IN AGRICULTURE IN SOUTHWEST CHINA: SPATIOTEMPORAL PATTERNS, DRIVING FACTORS, AND MULTI-SCENARIO PROJECTIONS",
+      "doi": "https://doi.org/10.15666/aeer/2402_28372860",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-10-30-study-on-calculating-net-carbon-sinks-in-agriculture-in.md"
     }
   ],
   "keys": [
@@ -411,6 +420,7 @@
     "doi:10.1186/s12942-026-00483-5",
     "doi:10.12765/cpos-2026-16",
     "doi:10.15244/pjoes/192374",
+    "doi:10.15666/aeer/2402_28372860",
     "doi:10.17645/pag.12268",
     "doi:10.17645/up.12067",
     "doi:10.17645/up.8562",
@@ -461,6 +471,7 @@
     "title:e9605a2cdecc30cf",
     "title:ea2ff702b183f1a8",
     "title:ebb8fa60ef2e27af",
+    "title:ed769541953501f3",
     "title:eed2dd3c20b2ad4a",
     "title:f321c7d0a75c3fbb",
     "title:f95e701a816e0b78"
