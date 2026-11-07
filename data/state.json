@@ -386,6 +386,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-10-30-study-on-calculating-net-carbon-sinks-in-agriculture-in.md"
+    },
+    {
+      "date": "2026-11-08",
+      "topic": "env-planning",
+      "title": "Biodiversity and ecological network: connecting ecosystem services for a sustainable future. GeoAI for Modica green city",
+      "doi": "https://doi.org/10.6093/1970-9870/11322",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-11-08-biodiversity-and-ecological-network-connecting-ecosystem.md"
     }
   ],
   "keys": [
@@ -432,12 +441,14 @@
     "doi:10.5194/bg-22-4291-2025",
     "doi:10.5194/bg-23-5035-2026",
     "doi:10.55845/jos-2025-1289",
+    "doi:10.6093/1970-9870/11322",
     "title:0187ba0a519d131d",
     "title:0507276bc4e56564",
     "title:053b0d1120027c9f",
     "title:064f1f1dceb854d5",
     "title:088b47a023c108b2",
     "title:1aabfdbbd214995d",
+    "title:1b733978ca31d79a",
     "title:1fd1c2c6cf13fad3",
     "title:2726b42f004e0f7e",
     "title:27876e7ea7f1bea6",
