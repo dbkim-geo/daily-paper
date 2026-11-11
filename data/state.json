@@ -395,6 +395,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-11-08-biodiversity-and-ecological-network-connecting-ecosystem.md"
+    },
+    {
+      "date": "2026-11-12",
+      "topic": "env-planning",
+      "title": "Efficiency versus sustainability: spatial mismatches between urban land-use and ecosystem services in China’s Yellow River Basin",
+      "doi": "https://doi.org/10.1057/s41599-026-08123-w",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-11-12-efficiency-versus-sustainability-spatial-mismatches-between.md"
     }
   ],
   "keys": [
@@ -416,6 +425,7 @@
     "doi:10.1021/acs.est.5c15215",
     "doi:10.1038/s42949-025-00332-7",
     "doi:10.1038/s42949-026-00461-7",
+    "doi:10.1057/s41599-026-08123-w",
     "doi:10.1080/14036096.2026.2719616",
     "doi:10.1080/21681376.2024.2422348",
     "doi:10.1080/24694452.2026.2704575",
@@ -477,6 +487,7 @@
     "title:df087458f426f654",
     "title:e163731e34fd7154",
     "title:e4a722bd4fbd0c64",
+    "title:e605c830edadcd83",
     "title:e66ac75d978f982c",
     "title:e7e1093f182cb676",
     "title:e9605a2cdecc30cf",
