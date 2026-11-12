@@ -404,6 +404,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-11-12-efficiency-versus-sustainability-spatial-mismatches-between.md"
+    },
+    {
+      "date": "2026-11-13",
+      "topic": "carbon-reduction",
+      "title": "Spatiotemporal evolution and influencing mechanisms of carbon pressure at the county scale: A case study of central-south Liaoning urban agglomeration, China",
+      "doi": "https://doi.org/10.1016/j.ecolind.2024.112900",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-11-13-spatiotemporal-evolution-and-influencing-mechanisms-of.md"
     }
   ],
   "keys": [
@@ -415,6 +424,7 @@
     "doi:10.1007/s00484-026-03172-x",
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1016/j.cities.2024.105458",
+    "doi:10.1016/j.ecolind.2024.112900",
     "doi:10.1016/j.energy.2025.135452",
     "doi:10.1016/j.envsoft.2026.107043",
     "doi:10.1016/j.erss.2026.104895",
@@ -482,6 +492,7 @@
     "title:ad0ec0fa4bc1ad50",
     "title:b6f97ac6c7d0744d",
     "title:bcbb837e03f3a588",
+    "title:c1daf4b316b833ec",
     "title:c43b9053294c070f",
     "title:d4ab9488c7d0507e",
     "title:df087458f426f654",
