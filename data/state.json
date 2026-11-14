@@ -413,6 +413,15 @@
       "arxiv_id": "",
       "source": "openalex",
       "post": "2026-11-13-spatiotemporal-evolution-and-influencing-mechanisms-of.md"
+    },
+    {
+      "date": "2026-11-15",
+      "topic": "urban-planning",
+      "title": "Interpreting core forms of urban morphology linked to urban functions with explainable graph neural network",
+      "doi": "https://doi.org/10.1016/j.compenvurbsys.2025.102267",
+      "arxiv_id": "",
+      "source": "openalex",
+      "post": "2026-11-15-interpreting-core-forms-of-urban-morphology-linked-to-urban.md"
     }
   ],
   "keys": [
@@ -424,6 +433,7 @@
     "doi:10.1007/s00484-026-03172-x",
     "doi:10.1007/s42484-026-00429-x",
     "doi:10.1016/j.cities.2024.105458",
+    "doi:10.1016/j.compenvurbsys.2025.102267",
     "doi:10.1016/j.ecolind.2024.112900",
     "doi:10.1016/j.energy.2025.135452",
     "doi:10.1016/j.envsoft.2026.107043",
@@ -474,6 +484,7 @@
     "title:27876e7ea7f1bea6",
     "title:2e14e61a61bde527",
     "title:30c932496e84267b",
+    "title:41a9f05797c0c944",
     "title:4851364b0895dfe7",
     "title:51a0a3ad74a2b98f",
     "title:5ae673f97cd058cf",
